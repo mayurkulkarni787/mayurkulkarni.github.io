@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Mayur Kulkarni – Power Platform Developer</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<script>history.scrollRestoration = 'manual';</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -1888,9 +1889,20 @@
 <footer>© 2026 · Mayur Kulkarni · Power Platform Developer</footer>
 
 <script>
-// Always start at top on refresh
+// ── FORCE TOP ON EVERY LOAD / REFRESH ──
+// Must be the very first thing — before any other JS runs
 history.scrollRestoration = 'manual';
-window.addEventListener('load', () => window.scrollTo(0, 0));
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+document.documentElement.scrollTop = 0;
+document.body.scrollTop = 0;
+
+window.addEventListener('load', () => {
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+});
+window.addEventListener('pageshow', () => {
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+});
 
 // ═══════════════════════════════════════
 // LIGHTBOX ENGINE
@@ -2063,8 +2075,10 @@ makeCarousel({ trackId: 'cert-track', prevId: 'cert-prev', nextId: 'cert-next', 
 // ═══════════════════════════════════════
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
+    const href = a.getAttribute('href');
+    if (!href || href === '#') return; // ignore bare # links
     e.preventDefault();
-    const t = document.querySelector(a.getAttribute('href'));
+    const t = document.querySelector(href);
     if (t) t.scrollIntoView({ behavior: 'smooth' });
   });
 });
