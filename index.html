@@ -182,6 +182,60 @@
     color: var(--light);
   }
 
+  /* ── SHOWCASE CAROUSEL ── */
+  .showcase-main {
+    position: relative; background: var(--ink); border-radius: 20px; overflow: hidden; margin-bottom: 16px;
+  }
+  .showcase-img-wrap {
+    width: 100%; height: 520px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+  }
+  #showcase-img { width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity 0.25s ease; }
+  #showcase-img.fade { opacity: 0; }
+  .showcase-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+    padding: 32px 24px 20px; pointer-events: none;
+  }
+  .showcase-project-label { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .showcase-file-label { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .showcase-empty { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 40px; }
+  .showcase-empty.show { display: flex; }
+  .showcase-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 52px; height: 52px; background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50%; color: #fff;
+    font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; z-index: 5; user-select: none;
+  }
+  .showcase-arrow:hover { background: rgba(255,255,255,0.3); }
+  .showcase-arrow.left  { left: 16px; }
+  .showcase-arrow.right { right: 16px; }
+  .showcase-arrow:disabled { opacity: 0.2; pointer-events: none; }
+  .showcase-counter {
+    position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.6);
+    color: #fff; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 100px; font-family: 'Sora', sans-serif;
+  }
+  .showcase-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .showcase-tab {
+    padding: 7px 16px; border-radius: 100px; font-size: 12px; font-weight: 600;
+    border: 1.5px solid var(--border); background: transparent; cursor: pointer;
+    color: var(--mid); transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .showcase-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .showcase-tab:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+  .showcase-filmstrip-wrap { overflow-x: auto; padding-bottom: 6px; }
+  .showcase-filmstrip-wrap::-webkit-scrollbar { height: 4px; }
+  .showcase-filmstrip-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .showcase-filmstrip { display: flex; gap: 10px; width: max-content; }
+  .showcase-thumb {
+    width: 100px; height: 68px; border-radius: 10px; overflow: hidden; cursor: pointer;
+    border: 2.5px solid transparent; transition: border-color 0.2s, opacity 0.2s;
+    opacity: 0.55; background: var(--border); flex-shrink: 0;
+  }
+  .showcase-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .showcase-thumb.active { border-color: var(--accent); opacity: 1; }
+  .showcase-thumb:hover { opacity: 0.85; }
+
   /* Prev / Next arrows */
   .cert-arrow {
     position: absolute;
@@ -976,6 +1030,7 @@
       <div class="hero-btns">
         <a href="#projects" class="btn-primary">View My Work →</a>
         <a href="resume/resume.pdf" download class="btn-secondary">📄 Download CV</a>
+        <a href="https://www.linkedin.com/in/mayurkulkarni787" target="_blank" class="btn-secondary">🔗 LinkedIn</a>
       </div>
       <div class="hero-stats">
         <div><div class="stat-num">15+</div><div class="stat-label">Projects Delivered</div></div>
@@ -1045,123 +1100,174 @@
 
     <div class="projects-grid">
 
-      <!--
-        HOW TO ADD YOUR FILES:
-        - folder: the subfolder inside images/ for this project
-        - media: list your files in order. Images: .jpg .png .gif  |  Videos: .mp4 .webm .mov
-        - The first image is used as the card thumbnail automatically.
-      -->
+      <!-- ════════════════════════════════════════════
+           FOLDER STRUCTURE for your GitHub repo:
+           images/
+           ├── vacation-approval-system/
+           │   ├── screen1.png  (used as card thumbnail)
+           │   ├── screen2.png
+           │   └── demo.mp4
+           ├── employee-referral-app/
+           ├── canteen-app/
+           ├── invoice-approval-flow/
+           ├── fastfood-sharepoint-site/
+           └── traveltour-sharepoint-site/
+           ════════════════════════════════════════════ -->
 
       <div class="project-card" data-category="powerapps"
-           data-folder="images/leave-request-app"
-           data-media="screen1.png,screen2.png,screen3.png,demo.mp4"
-           data-title="Leave Request App">
+           data-folder="images/vacation-approval-system"
+           data-media="screen1.png,screen2.png,screen3.png"
+           data-title="Vacation Approval System">
         <div class="project-thumb blue">
-          <img src="images/leave-request-app/screen1.png" alt="Leave Request App"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='📋';" />
+          <img src="images/vacation-approval-system/screen1.png" alt="Vacation Approval System"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='🏖️';" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
           <div class="project-type">Power Apps</div>
-          <div class="project-title">Leave Request App</div>
-          <div class="project-desc">Canvas app for employees to submit, track, and manage leave requests — with manager approval flow.</div>
+          <div class="project-title">Vacation Approval System</div>
+          <div class="project-desc">End-to-end leave request and approval app for 200+ employees with calendar UI, manager workflows, and Teams notifications.</div>
           <div class="project-tags"><span class="tag">Power Apps</span><span class="tag">Power Automate</span><span class="tag">SharePoint</span></div>
           <button class="view-gallery-btn">🖼️ View Gallery</button>
         </div>
       </div>
 
-      <div class="project-card" data-category="spfx"
-           data-folder="images/intranet-news"
+      <div class="project-card" data-category="powerapps"
+           data-folder="images/employee-referral-app"
            data-media="screen1.png,screen2.png,screen3.png"
-           data-title="Intranet News Web Part">
+           data-title="Employee Referral App">
         <div class="project-thumb purple">
-          <img src="images/intranet-news/screen1.png" alt="Intranet News"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='⚛️';" />
+          <img src="images/employee-referral-app/screen1.png" alt="Employee Referral App"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='🤝';" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
-          <div class="project-type">SPFx</div>
-          <div class="project-title">Intranet News Web Part</div>
-          <div class="project-desc">Custom React-based SPFx web part for a company intranet with filterable news feed and announcements.</div>
-          <div class="project-tags"><span class="tag">SPFx</span><span class="tag">React</span><span class="tag">TypeScript</span></div>
+          <div class="project-type">Power Apps</div>
+          <div class="project-title">Employee Referral App</div>
+          <div class="project-desc">Canvas app enabling employees to submit, track, and manage job referrals with automated status updates and HR notifications.</div>
+          <div class="project-tags"><span class="tag">Power Apps</span><span class="tag">Dataverse</span><span class="tag">Power Automate</span></div>
+          <button class="view-gallery-btn">🖼️ View Gallery</button>
+        </div>
+      </div>
+
+      <div class="project-card" data-category="powerapps"
+           data-folder="images/canteen-app"
+           data-media="screen1.png,screen2.png,screen3.png"
+           data-title="Canteen App">
+        <div class="project-thumb green">
+          <img src="images/canteen-app/screen1.png" alt="Canteen App"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='🍽️';" />
+          <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
+        </div>
+        <div class="project-body">
+          <div class="project-type">Power Apps</div>
+          <div class="project-title">Canteen App</div>
+          <div class="project-desc">Digital canteen ordering and menu management app with daily meal tracking, payment logging, and admin dashboard.</div>
+          <div class="project-tags"><span class="tag">Power Apps</span><span class="tag">SharePoint</span><span class="tag">Power Automate</span></div>
           <button class="view-gallery-btn">🖼️ View Gallery</button>
         </div>
       </div>
 
       <div class="project-card" data-category="automate"
-           data-folder="images/invoice-approval"
-           data-media="screen1.png,screen2.png,flow-demo.mp4"
+           data-folder="images/invoice-approval-flow"
+           data-media="screen1.png,screen2.png,screen3.png,demo.mp4"
            data-title="Invoice Approval Flow">
-        <div class="project-thumb green">
-          <img src="images/invoice-approval/screen1.png" alt="Invoice Approval"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='🤖';" />
+        <div class="project-thumb orange">
+          <img src="images/invoice-approval-flow/screen1.png" alt="Invoice Approval Flow"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='🧾';" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
           <div class="project-type">Power Automate</div>
           <div class="project-title">Invoice Approval Flow</div>
-          <div class="project-desc">End-to-end automated invoice processing flow with multi-level approvals and SharePoint logging.</div>
-          <div class="project-tags"><span class="tag">Power Automate</span><span class="tag">Outlook</span><span class="tag">Teams</span></div>
+          <div class="project-desc">Multi-level invoice processing automation with Outlook approvals, Teams alerts, and full audit trail in SharePoint.</div>
+          <div class="project-tags"><span class="tag">Power Automate</span><span class="tag">Outlook</span><span class="tag">Teams</span><span class="tag">SharePoint</span></div>
           <button class="view-gallery-btn">🖼️ View Gallery</button>
         </div>
       </div>
 
-      <div class="project-card" data-category="powerapps"
-           data-folder="images/asset-management"
-           data-media="screen1.png,screen2.png,screen3.png,screen4.png"
-           data-title="Asset Management System">
-        <div class="project-thumb orange">
-          <img src="images/asset-management/screen1.png" alt="Asset Management"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='🏢';" />
-          <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
-        </div>
-        <div class="project-body">
-          <div class="project-type">Power Apps + SPFx</div>
-          <div class="project-title">Asset Management System</div>
-          <div class="project-desc">Model-driven app for tracking company assets and maintenance schedules stored in Dataverse.</div>
-          <div class="project-tags"><span class="tag">Power Apps</span><span class="tag">Dataverse</span><span class="tag">Power BI</span></div>
-          <button class="view-gallery-btn">🖼️ View Gallery</button>
-        </div>
-      </div>
-
-      <div class="project-card" data-category="spfx"
-           data-folder="images/hr-dashboard"
-           data-media="screen1.png,screen2.png"
-           data-title="HR Dashboard Web Part">
-        <div class="project-thumb teal">
-          <img src="images/hr-dashboard/screen1.png" alt="HR Dashboard"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='📊';" />
-          <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
-        </div>
-        <div class="project-body">
-          <div class="project-type">SPFx Dashboard</div>
-          <div class="project-title">HR Dashboard Web Part</div>
-          <div class="project-desc">Interactive SPFx React dashboard displaying HR KPIs and department metrics from SharePoint lists.</div>
-          <div class="project-tags"><span class="tag">SPFx</span><span class="tag">React</span><span class="tag">Chart.js</span></div>
-          <button class="view-gallery-btn">🖼️ View Gallery</button>
-        </div>
-      </div>
-
-      <div class="project-card" data-category="powerapps"
-           data-folder="images/visitor-management"
+      <div class="project-card" data-category="sharepoint"
+           data-folder="images/fastfood-sharepoint-site"
            data-media="screen1.png,screen2.png,screen3.png"
-           data-title="Visitor Management App">
-        <div class="project-thumb pink">
-          <img src="images/visitor-management/screen1.png" alt="Visitor Management"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='📝';" />
+           data-title="FastFood SharePoint Site">
+        <div class="project-thumb teal">
+          <img src="images/fastfood-sharepoint-site/screen1.png" alt="FastFood SharePoint Site"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='🍔';" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
-          <div class="project-type">Power Apps</div>
-          <div class="project-title">Visitor Management App</div>
-          <div class="project-desc">Tablet-friendly check-in app for office visitors with QR code badge printing and Teams notification.</div>
-          <div class="project-tags"><span class="tag">Power Apps</span><span class="tag">Teams</span><span class="tag">SharePoint</span></div>
+          <div class="project-type">SharePoint Online</div>
+          <div class="project-title">FastFood SharePoint Site</div>
+          <div class="project-desc">Modern SharePoint communication site for a fast food chain with branded intranet, menu management, and staff portal.</div>
+          <div class="project-tags"><span class="tag">SharePoint</span><span class="tag">SPFx</span><span class="tag">Fluent UI</span></div>
+          <button class="view-gallery-btn">🖼️ View Gallery</button>
+        </div>
+      </div>
+
+      <div class="project-card" data-category="sharepoint"
+           data-folder="images/traveltour-sharepoint-site"
+           data-media="screen1.png,screen2.png,screen3.png"
+           data-title="TravelTour SharePoint Site">
+        <div class="project-thumb pink">
+          <img src="images/traveltour-sharepoint-site/screen1.png" alt="TravelTour SharePoint Site"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='✈️';" />
+          <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
+        </div>
+        <div class="project-body">
+          <div class="project-type">SharePoint Online</div>
+          <div class="project-title">TravelTour SharePoint Site</div>
+          <div class="project-desc">Full travel agency intranet with destination pages, booking request forms, itinerary libraries, and team collaboration hub.</div>
+          <div class="project-tags"><span class="tag">SharePoint</span><span class="tag">SPFx</span><span class="tag">Power Apps</span></div>
           <button class="view-gallery-btn">🖼️ View Gallery</button>
         </div>
       </div>
 
     </div>
   </section>
+</div>
+
+<!-- ═══ PROJECT SHOWCASE CAROUSEL ═══ -->
+<div style="padding:80px 48px; background:var(--white);" id="showcase">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div class="section-label">Visual Showcase</div>
+    <h2 class="section-title">Project Screenshots</h2>
+    <p class="section-sub">A visual walk-through across all projects — scroll through to explore.</p>
+
+    <div class="showcase-wrap" style="margin-top:40px; position:relative;">
+
+      <!-- Big image display -->
+      <div class="showcase-main" id="showcase-main">
+        <div class="showcase-img-wrap" id="showcase-img-wrap">
+          <img id="showcase-img" src="" alt="" />
+          <div class="showcase-overlay" id="showcase-overlay">
+            <div class="showcase-project-label" id="showcase-project-label"></div>
+            <div class="showcase-file-label" id="showcase-file-label"></div>
+          </div>
+          <div class="showcase-empty" id="showcase-empty">
+            <div style="font-size:48px; margin-bottom:12px;">🖼️</div>
+            <div style="font-size:15px; font-weight:600; color:var(--mid);">Add screenshots to your project folders</div>
+            <div style="font-size:13px; color:var(--light); margin-top:6px;">images/vacation-approval-system/screen1.png etc.</div>
+          </div>
+        </div>
+
+        <!-- Left / Right arrows -->
+        <button class="showcase-arrow left" id="showcase-prev">‹</button>
+        <button class="showcase-arrow right" id="showcase-next">›</button>
+
+        <!-- Counter badge -->
+        <div class="showcase-counter" id="showcase-counter">1 / 18</div>
+      </div>
+
+      <!-- Project tab switcher -->
+      <div class="showcase-tabs" id="showcase-tabs"></div>
+
+      <!-- Thumbnail filmstrip -->
+      <div class="showcase-filmstrip-wrap">
+        <div class="showcase-filmstrip" id="showcase-filmstrip"></div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <!-- ═══ STATS STRIP ═══ -->
@@ -1960,8 +2066,144 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 // ═══════════════════════════════════════
-// GENERIC CAROUSEL FACTORY
+// SHOWCASE CAROUSEL
+// Reads project cards' data-folder + data-media
+// and builds a big image carousel with tabs + filmstrip
 // ═══════════════════════════════════════
+(function() {
+  // Collect all projects from the project cards
+  const projects = Array.from(document.querySelectorAll('.project-card')).map(card => ({
+    title:  card.dataset.title  || 'Project',
+    folder: card.dataset.folder || '',
+    files:  (card.dataset.media || '').split(',').map(f => f.trim()).filter(f => f && !f.match(/\.(mp4|webm|mov|ogg)$/i))
+  })).filter(p => p.files.length > 0);
+
+  const imgEl        = document.getElementById('showcase-img');
+  const overlayProj  = document.getElementById('showcase-project-label');
+  const overlayFile  = document.getElementById('showcase-file-label');
+  const counter      = document.getElementById('showcase-counter');
+  const prevBtn      = document.getElementById('showcase-prev');
+  const nextBtn      = document.getElementById('showcase-next');
+  const tabsEl       = document.getElementById('showcase-tabs');
+  const filmstrip    = document.getElementById('showcase-filmstrip');
+  const emptyEl      = document.getElementById('showcase-empty');
+  const imgWrap      = document.getElementById('showcase-img-wrap');
+
+  if (!imgEl) return;
+
+  // Build flat list of all slides across all projects
+  let allSlides = [];
+  projects.forEach(p => {
+    p.files.forEach(f => {
+      allSlides.push({ src: p.folder + '/' + f, project: p.title, file: f });
+    });
+  });
+
+  let currentSlide = 0;
+  let currentProject = 'all';
+
+  function getSlides() {
+    if (currentProject === 'all') return allSlides;
+    return allSlides.filter(s => s.project === currentProject);
+  }
+
+  function buildTabs() {
+    tabsEl.innerHTML = '';
+    const allBtn = document.createElement('button');
+    allBtn.className = 'showcase-tab active';
+    allBtn.textContent = 'All Projects';
+    allBtn.dataset.proj = 'all';
+    allBtn.addEventListener('click', () => switchProject('all', allBtn));
+    tabsEl.appendChild(allBtn);
+
+    projects.forEach(p => {
+      const btn = document.createElement('button');
+      btn.className = 'showcase-tab';
+      btn.textContent = p.title;
+      btn.dataset.proj = p.title;
+      btn.addEventListener('click', () => switchProject(p.title, btn));
+      tabsEl.appendChild(btn);
+    });
+  }
+
+  function switchProject(name, btn) {
+    currentProject = name;
+    currentSlide = 0;
+    tabsEl.querySelectorAll('.showcase-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    buildFilmstrip();
+    showSlide(0);
+  }
+
+  function buildFilmstrip() {
+    filmstrip.innerHTML = '';
+    const slides = getSlides();
+    slides.forEach((s, i) => {
+      const div = document.createElement('div');
+      div.className = 'showcase-thumb' + (i === 0 ? ' active' : '');
+      const img = document.createElement('img');
+      img.src = s.src;
+      img.alt = s.file;
+      img.onerror = () => { div.style.background = '#e4e4e4'; img.style.display = 'none'; };
+      div.appendChild(img);
+      div.addEventListener('click', () => showSlide(i));
+      filmstrip.appendChild(div);
+    });
+  }
+
+  function showSlide(idx) {
+    const slides = getSlides();
+    if (slides.length === 0) {
+      imgEl.style.display = 'none';
+      emptyEl.classList.add('show');
+      counter.textContent = '0 / 0';
+      prevBtn.disabled = nextBtn.disabled = true;
+      return;
+    }
+    emptyEl.classList.remove('show');
+    imgEl.style.display = 'block';
+
+    currentSlide = Math.max(0, Math.min(idx, slides.length - 1));
+    const slide = slides[currentSlide];
+
+    imgEl.classList.add('fade');
+    setTimeout(() => {
+      imgEl.src = slide.src;
+      imgEl.alt = slide.file;
+      imgEl.onerror = () => { imgEl.src = ''; imgEl.alt = 'Image not found'; };
+      imgEl.classList.remove('fade');
+    }, 150);
+
+    overlayProj.textContent = slide.project;
+    overlayFile.textContent = slide.file;
+    counter.textContent = `${currentSlide + 1} / ${slides.length}`;
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+
+    // Update filmstrip
+    filmstrip.querySelectorAll('.showcase-thumb').forEach((t, i) => t.classList.toggle('active', i === currentSlide));
+    const activeThumb = filmstrip.querySelectorAll('.showcase-thumb')[currentSlide];
+    if (activeThumb) activeThumb.scrollIntoView({ inline: 'nearest', behavior: 'smooth' });
+  }
+
+  prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+  nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+
+  // Keyboard (only when not in lightbox)
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('lightbox').classList.contains('open')) return;
+    const showcaseVisible = document.getElementById('showcase')?.getBoundingClientRect();
+    if (!showcaseVisible) return;
+    if (e.key === 'ArrowLeft')  showSlide(currentSlide - 1);
+    if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
+  });
+
+  buildTabs();
+  buildFilmstrip();
+  showSlide(0);
+})();
+
+
 function makeCarousel({ trackId, prevId, nextId, dotsId, visible = 3, gap = 24, dotClass, dotActiveClass }) {
   const track   = document.getElementById(trackId);
   const prevBtn = document.getElementById(prevId);
