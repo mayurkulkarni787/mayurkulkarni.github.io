@@ -4,7 +4,41 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Mayur Kulkarni – Power Platform Developer</title>
+<script>if('scrollRestoration'in history)history.scrollRestoration='manual';</script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<script>
+// ── Early-defined fallback functions ──
+// These MUST be in <head> because HTML onerror= fires before body scripts load.
+
+function tryHeroPhoto(img) {
+  var exts = ['png','jpeg','webp'];
+  var tried = img.dataset.heroTried ? parseInt(img.dataset.heroTried) : 0;
+  if (tried < exts.length) {
+    img.dataset.heroTried = tried + 1;
+    img.src = 'images/profile/photo.' + exts[tried];
+  } else {
+    img.style.display = 'none';
+    var wrap = document.getElementById('hero-avatar-wrap');
+    if (wrap) wrap.innerHTML = '<span style="font-size:72px">⚡</span>';
+  }
+}
+
+function tryThumb(img, folder) {
+  var exts = ['jpg','png','jpeg','webp'];
+  var names = ['Thumbnail','thumbnail','THUMBNAIL','thumb','Thumb'];
+  var tried = img.dataset.thumbTried ? parseInt(img.dataset.thumbTried) : 0;
+  var total = names.length * exts.length;
+  if (tried < total) {
+    var n = names[Math.floor(tried / exts.length)];
+    var e = exts[tried % exts.length];
+    img.dataset.thumbTried = tried + 1;
+    img.src = folder + '/' + n + '.' + e;
+  } else {
+    // All variants exhausted — hide img so gradient background shows + icon
+    img.style.display = 'none';
+  }
+}
+</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -49,9 +83,21 @@
   .hero-stats { display: flex; gap: 32px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
   .stat-num { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); letter-spacing: -1px; }
   .stat-label { font-size: 12px; color: var(--light); margin-top: 2px; }
-  .hero-visual { position: relative; }
-  .hero-avatar { width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, #e8f0ff 0%, #ddeeff 100%); border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 80px; box-shadow: var(--shadow); overflow: hidden; }
-  .hero-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 28px; }
+
+  /* HERO LOGO STRIP */
+  .hero-logos { margin-top: 28px; }
+  .hero-logos-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--light); display: block; margin-bottom: 12px; }
+  .hero-logos-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .hero-logos-row img { width: 32px; height: 32px; object-fit: contain; filter: grayscale(1) opacity(0.5); transition: filter 0.25s, transform 0.2s, box-shadow 0.2s; border-radius: 8px; border: 1px solid var(--border); background: var(--white); padding: 4px; }
+  .hero-logos-row img:hover { filter: grayscale(0) opacity(1); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .hero-visual { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .hero-avatar { width: 220px; height: 220px; background: linear-gradient(135deg, #e8f0ff 0%, #ddeeff 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 72px; box-shadow: 0 8px 40px rgba(0,120,212,0.18); overflow: hidden; border: 4px solid var(--white); }
+  .hero-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .hero-photo-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .hero-photo-btns a { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 100px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.2s; border: 1.5px solid var(--border); background: var(--white); color: var(--ink); }
+  .hero-photo-btns a:hover { border-color: var(--accent); color: var(--accent); background: var(--accent2); }
+  .hero-photo-btns a.wa-btn { background: #25d366; color: #fff; border-color: #25d366; }
+  .hero-photo-btns a.wa-btn:hover { background: #1ebe5d; border-color: #1ebe5d; color: #fff; }
   .floating-chip { position: absolute; background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 10px 16px; font-size: 12px; font-weight: 600; box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
   .chip-1 { top: -12px; right: -12px; }
   .chip-2 { bottom: 20px; left: -20px; }
@@ -68,17 +114,17 @@
 
   /* PROJECTS */
   #projects { max-width: 1100px; margin: 0 auto; }
-  .projects-filter { display: flex; gap: 10px; margin: 24px 0 36px; flex-wrap: wrap; }
-  .filter-btn { padding: 7px 18px; border-radius: 100px; font-size: 13px; font-weight: 500; border: 1.5px solid var(--border); background: transparent; cursor: pointer; color: var(--mid); transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .projects-filter { display: flex; gap: 8px; margin: 24px 0 32px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 16px; border-radius: 100px; font-size: 12px; font-weight: 500; border: 1.5px solid var(--border); background: transparent; cursor: pointer; color: var(--mid); transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
   .filter-btn.active, .filter-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
-  .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .projects-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
   .project-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
   .project-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
-  .project-thumb { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 48px; position: relative; overflow: hidden; }
+  .project-thumb { height: 130px; display: flex; align-items: center; justify-content: center; font-size: 36px; position: relative; overflow: hidden; }
   .project-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .project-thumb .thumb-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .project-card:hover .thumb-overlay { background: rgba(0,0,0,0.35); }
-  .thumb-overlay-icon { color: white; font-size: 32px; opacity: 0; transform: scale(0.8); transition: opacity 0.2s, transform 0.2s; }
+  .thumb-overlay-icon { color: white; font-size: 24px; opacity: 0; transform: scale(0.8); transition: opacity 0.2s, transform 0.2s; }
   .project-card:hover .thumb-overlay-icon { opacity: 1; transform: scale(1); }
   .project-thumb.blue { background: linear-gradient(135deg, #e8f0ff, #c7ddff); }
   .project-thumb.purple { background: linear-gradient(135deg, #f3e8ff, #e0c7ff); }
@@ -86,13 +132,13 @@
   .project-thumb.orange { background: linear-gradient(135deg, #fff8e8, #ffe7c7); }
   .project-thumb.teal { background: linear-gradient(135deg, #e8f8ff, #c7eeff); }
   .project-thumb.pink { background: linear-gradient(135deg, #ffe8f0, #ffc7dd); }
-  .project-body { padding: 20px; }
-  .project-type { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-  .project-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-  .project-desc { font-size: 13px; color: var(--mid); line-height: 1.6; margin-bottom: 14px; }
-  .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag { background: var(--tag-bg); color: var(--tag-txt); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
-  .view-gallery-btn { margin-top: 14px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--accent); cursor: pointer; background: var(--accent2); border: none; border-radius: 100px; padding: 7px 14px; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+  .project-body { padding: 14px; }
+  .project-type { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+  .project-title { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+  .project-desc { font-size: 12px; color: var(--mid); line-height: 1.5; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { background: var(--tag-bg); color: var(--tag-txt); font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 100px; }
+  .view-gallery-btn { margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--accent); cursor: pointer; background: var(--accent2); border: none; border-radius: 100px; padding: 5px 12px; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
   .view-gallery-btn:hover { background: #d0e4ff; }
 
   /* SKILLS */
@@ -120,34 +166,19 @@
   .cert-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.35; margin-bottom: 6px; }
   .cert-date { font-size: 12px; color: var(--light); }
 
-  /* SHOWCASE CAROUSEL */
-  .showcase-main { position: relative; background: var(--ink); border-radius: 20px; overflow: hidden; margin-bottom: 16px; }
-  .showcase-img-wrap { width: 100%; height: 520px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  #showcase-img { width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity 0.25s ease; }
-  #showcase-img.fade { opacity: 0; }
-  .showcase-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%); padding: 32px 24px 20px; pointer-events: none; }
-  .showcase-project-label { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-  .showcase-file-label { font-size: 12px; color: rgba(255,255,255,0.5); }
-  .showcase-empty { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 40px; }
-  .showcase-empty.show { display: flex; }
-  .showcase-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 52px; height: 52px; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50%; color: #fff; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; z-index: 5; user-select: none; }
-  .showcase-arrow:hover { background: rgba(255,255,255,0.3); }
-  .showcase-arrow.left { left: 16px; }
-  .showcase-arrow.right { right: 16px; }
-  .showcase-arrow:disabled { opacity: 0.2; pointer-events: none; }
-  .showcase-counter { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 100px; font-family: 'Sora', sans-serif; }
-  .showcase-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-  .showcase-tab { padding: 7px 16px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid var(--border); background: transparent; cursor: pointer; color: var(--mid); transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
-  .showcase-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-  .showcase-tab:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
-  .showcase-filmstrip-wrap { overflow-x: auto; padding-bottom: 6px; }
-  .showcase-filmstrip-wrap::-webkit-scrollbar { height: 4px; }
-  .showcase-filmstrip-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .showcase-filmstrip { display: flex; gap: 10px; width: max-content; }
-  .showcase-thumb { width: 100px; height: 68px; border-radius: 10px; overflow: hidden; cursor: pointer; border: 2.5px solid transparent; transition: border-color 0.2s, opacity 0.2s; opacity: 0.55; background: var(--border); flex-shrink: 0; }
-  .showcase-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .showcase-thumb.active { border-color: var(--accent); opacity: 1; }
-  .showcase-thumb:hover { opacity: 0.85; }
+  /* PROJECT SLIDESHOW */
+  .proj-slideshow { position: relative; border-radius: 16px; overflow: hidden; background: var(--ink); cursor: pointer; }
+  .proj-slideshow-track { display: flex; transition: transform 0.6s cubic-bezier(0.25,0.8,0.25,1); will-change: transform; }
+  .proj-slide { flex: 0 0 100%; aspect-ratio: 16/8; position: relative; overflow: hidden; }
+  .proj-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .proj-slide-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .proj-slideshow:hover .proj-slide-overlay { background: rgba(0,0,0,0.35); }
+  .proj-slide-overlay span { color: #fff; font-size: 15px; font-weight: 700; opacity: 0; transform: scale(0.85); transition: opacity 0.2s, transform 0.2s; font-family: 'Sora', sans-serif; }
+  .proj-slideshow:hover .proj-slide-overlay span { opacity: 1; transform: scale(1); }
+  .proj-slideshow-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+  .proj-slideshow-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background 0.2s, transform 0.2s; border: none; padding: 0; }
+  .proj-slideshow-dot.active { background: var(--accent); transform: scale(1.3); }
+  .proj-slideshow-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--accent); transition: width 0s linear; border-radius: 0 2px 2px 0; pointer-events: none; }
 
   /* Cert Arrows */
   .cert-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; background: var(--white); border: 1.5px solid var(--border); border-radius: 50%; color: var(--ink); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); transition: background 0.2s, border-color 0.2s; z-index: 10; }
@@ -163,8 +194,9 @@
   #experience { max-width: 1100px; margin: 0 auto; }
   .exp-timeline { position: relative; margin-top: 48px; padding-left: 32px; }
   .exp-timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--border)); border-radius: 2px; }
-  .exp-item { position: relative; margin-bottom: 48px; opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
-  .exp-item.visible { opacity: 1; transform: translateY(0); }
+  .exp-item { position: relative; margin-bottom: 48px; opacity: 1; transform: translateY(0); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .exp-item.animate-ready { opacity: 0; transform: translateY(20px); }
+  .exp-item.animate-ready.visible { opacity: 1; transform: translateY(0); }
   .exp-item:last-child { margin-bottom: 0; }
   .exp-dot { position: absolute; left: -38px; top: 8px; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 3px solid var(--white); box-shadow: 0 0 0 2px var(--accent); z-index: 1; }
   .exp-item:first-child .exp-dot { background: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
@@ -213,11 +245,11 @@
   .nav-drop-menu a:hover { background: var(--accent2); color: var(--accent); }
   .pill-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
 
+
   /* STATS STRIP */
   #stats-strip { background: var(--ink); padding: 0; max-width: 100%; margin: 0; }
   .stats-inner { max-width: 1100px; margin: 0 auto; padding: 48px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
-  .stat-item { text-align: center; padding: 24px 16px; position: relative; opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
-  .stat-item.visible { opacity: 1; transform: translateY(0); }
+  .stat-item { text-align: center; padding: 24px 16px; position: relative; }
   .stat-item + .stat-item::before { content: ''; position: absolute; left: 0; top: 20%; height: 60%; width: 1px; background: rgba(255,255,255,0.12); }
   .stat-big { font-family: 'Sora', sans-serif; font-size: clamp(32px, 4vw, 52px); font-weight: 800; color: #fff; letter-spacing: -2px; line-height: 1; margin-bottom: 8px; }
   .stat-big span { color: var(--accent); }
@@ -368,16 +400,17 @@
     .hero-visual { display: none; }
     section { padding: 48px 20px; }
     .about-grid, #contact { grid-template-columns: 1fr; }
-    .projects-grid, .services-grid, .edu-grid { grid-template-columns: 1fr; }
+    .projects-grid, .services-grid, .edu-grid { grid-template-columns: repeat(2, 1fr); }
     .skills-icons { grid-template-columns: repeat(3, 1fr); }
     .form-row { grid-template-columns: 1fr; }
     .lb-arrow { width: 38px; height: 38px; font-size: 16px; }
-    .stats-inner { grid-template-columns: repeat(2, 1fr); padding: 32px 20px; }
+
     .testi-card, .li-card { flex: 0 0 85vw; }
     .cert-card { flex: 0 0 72vw; }
     .testi-arrow.left, .li-arrow.left, .cert-arrow.left { left: 4px; }
     .testi-arrow.right, .li-arrow.right, .cert-arrow.right { right: 4px; }
     .testimonials-bg { padding: 60px 20px; }
+    .stats-inner { grid-template-columns: repeat(2, 1fr); padding: 32px 20px; }
   }
 </style>
 </head>
@@ -407,7 +440,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">M<span>.</span>dev</div>
+  <div class="nav-logo">MayurK<span>.</span>dev</div>
   <div class="nav-links">
     <a href="#hero" class="active">Home</a>
     <a href="#about">About</a>
@@ -461,21 +494,40 @@
       <div class="hero-badge"><span class="dot"></span>Available for new projects</div>
       <h1 class="hero-title">Power Platform<br/><span>Developer</span><br/>& SPFx Expert</h1>
       <p class="hero-sub">I build smart business solutions with <strong>Power Apps</strong>, <strong>Power Automate</strong>, and <strong>SharePoint SPFx</strong> — turning complex workflows into simple, elegant apps.</p>
-      <div class="hero-btns">
-        <a href="#projects" class="btn-primary">View My Work →</a>
-        <a href="resume/resume.pdf" download class="btn-secondary">📄 Download CV</a>
-        <a href="https://www.linkedin.com/in/mayur-kulkarni-121118196/" target="_blank" rel="noopener" class="btn-secondary">🔗 LinkedIn</a>
-      </div>
       <div class="hero-stats">
         <div><div class="stat-num">15+</div><div class="stat-label">Projects Delivered</div></div>
         <div><div class="stat-num">3+</div><div class="stat-label">Years Experience</div></div>
         <div><div class="stat-num">10+</div><div class="stat-label">Happy Clients</div></div>
       </div>
+      <div class="hero-logos">
+        <span class="hero-logos-label">Built with</span>
+        <div class="hero-logos-row">
+          <img src="images/logos/power-apps.png"      alt="Power Apps"      title="Power Apps"      onerror="this.style.display='none'"/>
+          <img src="images/logos/power-automate.png"  alt="Power Automate"  title="Power Automate"  onerror="this.style.display='none'"/>
+          <img src="images/logos/sharepoint.png"      alt="SharePoint"      title="SharePoint"      onerror="this.style.display='none'"/>
+          <img src="images/logos/spfx.png"            alt="SPFx"            title="SPFx"            onerror="this.style.display='none'"/>
+          <img src="images/logos/dataverse.png"       alt="Dataverse"       title="Dataverse"       onerror="this.style.display='none'"/>
+          <img src="images/logos/power-bi.png"        alt="Power BI"        title="Power BI"        onerror="this.style.display='none'"/>
+          <img src="images/logos/copilot-studio.png"  alt="Copilot Studio"  title="Copilot Studio"  onerror="this.style.display='none'"/>
+          <img src="images/logos/power-pages.png"     alt="Power Pages"     title="Power Pages"     onerror="this.style.display='none'"/>
+        </div>
+      </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-avatar">⚡</div>
-      <div class="floating-chip chip-1"><span>⚙️</span><span>Power Apps</span></div>
-      <div class="floating-chip chip-2"><span>⚛️</span><span>SPFx React</span></div>
+      <div style="position:relative;">
+        <div class="hero-avatar" id="hero-avatar-wrap">
+          <img id="hero-photo" src="images/profile/photo.jpg" alt="Mayur Kulkarni"
+               onerror="tryHeroPhoto(this)" />
+        </div>
+        <div class="floating-chip chip-1"><span>⚙️</span><span>Power Apps</span></div>
+        <div class="floating-chip chip-2"><span>⚛️</span><span>SPFx React</span></div>
+      </div>
+      <div class="hero-photo-btns">
+        <a href="#projects">👀 View My Work</a>
+        <a href="resume/resume.pdf" download>📄 Download CV</a>
+        <a href="https://www.linkedin.com/in/mayur-kulkarni-121118196/" target="_blank" rel="noopener">🔗 LinkedIn</a>
+        <a href="https://wa.me/919403548207" target="_blank" rel="noopener" class="wa-btn">💬 WhatsApp</a>
+      </div>
     </div>
   </div>
 </div>
@@ -525,19 +577,17 @@
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="powerapps">Power Apps</button>
       <button class="filter-btn" data-filter="automate">Power Automate</button>
-      <button class="filter-btn" data-filter="spfx">SPFx</button>
-      <button class="filter-btn" data-filter="sharepoint">SharePoint</button>
+      <button class="filter-btn" data-filter="sharepoint">SharePoint Online</button>
     </div>
 
     <div class="projects-grid">
 
+      <!-- ROW 1 — Power Apps x4 -->
       <div class="project-card" data-category="powerapps"
            data-folder="images/vacation-approval-system"
-           data-media="screen1.png,screen2.png,screen3.png"
            data-title="Vacation Approval System">
         <div class="project-thumb blue">
-          <img src="images/vacation-approval-system/screen1.png" alt="Vacation Approval System"
-               onerror="this.style.display='none';" />
+          <img src="images/vacation-approval-system/Thumbnail.jpg" alt="Vacation Approval System" onerror="tryThumb(this,'images/vacation-approval-system')" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
@@ -551,11 +601,9 @@
 
       <div class="project-card" data-category="powerapps"
            data-folder="images/employee-referral-app"
-           data-media="screen1.png,screen2.png,screen3.png"
            data-title="Employee Referral App">
         <div class="project-thumb purple">
-          <img src="images/employee-referral-app/screen1.png" alt="Employee Referral App"
-               onerror="this.style.display='none';" />
+          <img src="images/employee-referral-app/Thumbnail.jpg" alt="Employee Referral App" onerror="tryThumb(this,'images/employee-referral-app')" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
@@ -569,11 +617,9 @@
 
       <div class="project-card" data-category="powerapps"
            data-folder="images/canteen-app"
-           data-media="screen1.png,screen2.png,screen3.png"
            data-title="Canteen App">
         <div class="project-thumb green">
-          <img src="images/canteen-app/screen1.png" alt="Canteen App"
-               onerror="this.style.display='none';" />
+          <img src="images/canteen-app/Thumbnail.jpg" alt="Canteen App" onerror="tryThumb(this,'images/canteen-app')" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
@@ -585,31 +631,44 @@
         </div>
       </div>
 
+      <div class="project-card" data-category="powerapps"
+           data-folder="images/employee-database-system"
+           data-title="Employee Database System">
+        <div class="project-thumb blue">
+          <img src="images/employee-database-system/Thumbnail.jpg" alt="Employee Database System" onerror="tryThumb(this,'images/employee-database-system')" />
+          <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
+        </div>
+        <div class="project-body">
+          <div class="project-type">Power Apps</div>
+          <div class="project-title">Employee Database System</div>
+          <div class="project-desc">Centralised employee records management app with department filters, profile views, onboarding workflows, and admin controls.</div>
+          <div class="project-tags"><span class="tag">Power Apps</span><span class="tag">Dataverse</span><span class="tag">SharePoint</span></div>
+          <button class="view-gallery-btn">🖼️ View Gallery</button>
+        </div>
+      </div>
+
+      <!-- ROW 2 — Power Automate x1 + SharePoint x3 -->
       <div class="project-card" data-category="automate"
            data-folder="images/invoice-approval-flow"
-           data-media="screen1.png,screen2.png,screen3.png,demo.mp4"
            data-title="Invoice Approval Flow">
         <div class="project-thumb orange">
-          <img src="images/invoice-approval-flow/screen1.png" alt="Invoice Approval Flow"
-               onerror="this.style.display='none';" />
+          <img src="images/invoice-approval-flow/Thumbnail.jpg" alt="Invoice Approval Flow" onerror="tryThumb(this,'images/invoice-approval-flow')" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
           <div class="project-type">Power Automate</div>
           <div class="project-title">Invoice Approval Flow</div>
           <div class="project-desc">Multi-level invoice processing automation with Outlook approvals, Teams alerts, and full audit trail in SharePoint.</div>
-          <div class="project-tags"><span class="tag">Power Automate</span><span class="tag">Outlook</span><span class="tag">Teams</span><span class="tag">SharePoint</span></div>
+          <div class="project-tags"><span class="tag">Power Automate</span><span class="tag">Outlook</span><span class="tag">Teams</span></div>
           <button class="view-gallery-btn">🖼️ View Gallery</button>
         </div>
       </div>
 
       <div class="project-card" data-category="sharepoint"
            data-folder="images/fastfood-sharepoint-site"
-           data-media="screen1.png,screen2.png,screen3.png"
            data-title="FastFood SharePoint Site">
         <div class="project-thumb teal">
-          <img src="images/fastfood-sharepoint-site/screen1.png" alt="FastFood SharePoint Site"
-               onerror="this.style.display='none';" />
+          <img src="images/fastfood-sharepoint-site/Thumbnail.jpg" alt="FastFood SharePoint Site" onerror="tryThumb(this,'images/fastfood-sharepoint-site')" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
@@ -623,11 +682,9 @@
 
       <div class="project-card" data-category="sharepoint"
            data-folder="images/traveltour-sharepoint-site"
-           data-media="screen1.png,screen2.png,screen3.png"
            data-title="TravelTour SharePoint Site">
         <div class="project-thumb pink">
-          <img src="images/traveltour-sharepoint-site/screen1.png" alt="TravelTour SharePoint Site"
-               onerror="this.style.display='none';" />
+          <img src="images/traveltour-sharepoint-site/Thumbnail.jpg" alt="TravelTour SharePoint Site" onerror="tryThumb(this,'images/traveltour-sharepoint-site')" />
           <div class="thumb-overlay"><span class="thumb-overlay-icon">🖼️</span></div>
         </div>
         <div class="project-body">
@@ -643,38 +700,55 @@
   </section>
 </div>
 
-<!-- ═══ PROJECT SHOWCASE CAROUSEL ═══ -->
-<div style="padding:80px 48px; background:var(--white);" id="showcase">
+<!-- ═══ PROJECT SLIDESHOW ═══ -->
+<div style="padding:40px 48px; background:var(--white);" id="showcase">
   <div style="max-width:1100px; margin:0 auto;">
-    <div class="section-label">Visual Showcase</div>
-    <h2 class="section-title">Project Screenshots</h2>
-    <p class="section-sub">A visual walk-through across all projects — scroll through to explore.</p>
 
-    <div class="showcase-wrap" style="margin-top:40px; position:relative;">
-      <div class="showcase-main" id="showcase-main">
-        <div class="showcase-img-wrap" id="showcase-img-wrap">
-          <img id="showcase-img" src="" alt="" />
-          <div class="showcase-overlay" id="showcase-overlay">
-            <div class="showcase-project-label" id="showcase-project-label"></div>
-            <div class="showcase-file-label" id="showcase-file-label"></div>
-          </div>
-          <div class="showcase-empty" id="showcase-empty">
-            <div style="font-size:48px; margin-bottom:12px;">🖼️</div>
-            <div style="font-size:15px; font-weight:600; color:rgba(255,255,255,0.7);">Add screenshots to your project folders</div>
-            <div style="font-size:13px; color:rgba(255,255,255,0.4); margin-top:6px;">images/vacation-approval-system/screen1.png etc.</div>
-          </div>
+    <div class="proj-slideshow" id="proj-slideshow">
+      <div class="proj-slideshow-track" id="proj-slideshow-track">
+
+        <div class="proj-slide" data-folder="images/vacation-approval-system" data-title="Vacation Approval System">
+          <img src="images/vacation-approval-system/Thumbnail.jpg" alt="Vacation Approval System" onerror="tryThumb(this,'images/vacation-approval-system')" />
+          <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
         </div>
-        <button class="showcase-arrow left" id="showcase-prev">‹</button>
-        <button class="showcase-arrow right" id="showcase-next">›</button>
-        <div class="showcase-counter" id="showcase-counter">1 / 18</div>
+
+        <div class="proj-slide" data-folder="images/employee-referral-app" data-title="Employee Referral App">
+          <img src="images/employee-referral-app/Thumbnail.jpg" alt="Employee Referral App" onerror="tryThumb(this,'images/employee-referral-app')" />
+          <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
+        </div>
+
+        <div class="proj-slide" data-folder="images/canteen-app" data-title="Canteen App">
+          <img src="images/canteen-app/Thumbnail.jpg" alt="Canteen App" onerror="tryThumb(this,'images/canteen-app')" />
+          <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
+        </div>
+
+        <div class="proj-slide" data-folder="images/invoice-approval-flow" data-title="Invoice Approval Flow">
+          <img src="images/invoice-approval-flow/Thumbnail.jpg" alt="Invoice Approval Flow" onerror="tryThumb(this,'images/invoice-approval-flow')" />
+          <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
+        </div>
+
+        <div class="proj-slide" data-folder="images/fastfood-sharepoint-site" data-title="FastFood SharePoint Site">
+          <img src="images/fastfood-sharepoint-site/Thumbnail.jpg" alt="FastFood SharePoint Site" onerror="tryThumb(this,'images/fastfood-sharepoint-site')" />
+          <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
+        </div>
+
+        <div class="proj-slide" data-folder="images/traveltour-sharepoint-site" data-title="TravelTour SharePoint Site">
+          <img src="images/traveltour-sharepoint-site/Thumbnail.jpg" alt="TravelTour SharePoint Site" onerror="tryThumb(this,'images/traveltour-sharepoint-site')" />
+          <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
+        </div>
+
       </div>
-      <div class="showcase-tabs" id="showcase-tabs"></div>
-      <div class="showcase-filmstrip-wrap">
-        <div class="showcase-filmstrip" id="showcase-filmstrip"></div>
-      </div>
+      <!-- progress bar -->
+      <div class="proj-slideshow-progress" id="proj-progress"></div>
     </div>
+
+    <!-- dots -->
+    <div class="proj-slideshow-dots" id="proj-dots"></div>
+
   </div>
 </div>
+
+
 
 <!-- ═══ STATS STRIP ═══ -->
 <div id="stats-strip">
@@ -1170,6 +1244,42 @@
   </section>
 </div>
 
+<!-- ═══ CONTACT POPUP MODAL ═══ -->
+<div id="contact-modal" style="display:none; position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
+  <div style="background:var(--white); border-radius:24px; padding:40px 36px; max-width:440px; width:92vw; position:relative; box-shadow:0 24px 80px rgba(0,0,0,0.25);">
+    <button onclick="closeContact()" style="position:absolute; top:16px; right:16px; width:36px; height:36px; border-radius:50%; border:1.5px solid var(--border); background:transparent; cursor:pointer; font-size:18px; color:var(--mid); display:flex; align-items:center; justify-content:center;">✕</button>
+    <div style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px;">Get In Touch</div>
+    <h3 style="font-family:'Sora',sans-serif; font-size:24px; font-weight:800; color:var(--ink); margin-bottom:8px;">Let's Talk!</h3>
+    <p style="font-size:14px; color:var(--mid); margin-bottom:28px; line-height:1.6;">Choose the best way to reach me. I respond within a few hours.</p>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <a href="https://wa.me/919403548207" target="_blank" rel="noopener"
+         style="display:flex; align-items:center; gap:14px; padding:16px 20px; background:#25d366; color:#fff; border-radius:14px; text-decoration:none; font-weight:700; font-size:14px; transition:background 0.2s;"
+         onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+        <span style="font-size:22px;">💬</span>
+        <div><div style="font-size:13px; font-weight:800;">WhatsApp</div><div style="font-size:12px; opacity:0.85; font-weight:400;">+91 94035 48207</div></div>
+      </a>
+      <a href="tel:+919403548207"
+         style="display:flex; align-items:center; gap:14px; padding:16px 20px; background:var(--ink); color:#fff; border-radius:14px; text-decoration:none; font-weight:700; font-size:14px; transition:background 0.2s;"
+         onmouseover="this.style.background='#333'" onmouseout="this.style.background='#111'">
+        <span style="font-size:22px;">📞</span>
+        <div><div style="font-size:13px; font-weight:800;">Call Me</div><div style="font-size:12px; opacity:0.7; font-weight:400;">+91 94035 48207</div></div>
+      </a>
+      <a href="mailto:mayurkulkarni787@gmail.com"
+         style="display:flex; align-items:center; gap:14px; padding:16px 20px; background:var(--accent2); color:var(--accent); border-radius:14px; text-decoration:none; font-weight:700; font-size:14px; transition:background 0.2s; border:1.5px solid var(--accent);"
+         onmouseover="this.style.background='#d0e4ff'" onmouseout="this.style.background='var(--accent2)'">
+        <span style="font-size:22px;">📧</span>
+        <div><div style="font-size:13px; font-weight:800;">Email Me</div><div style="font-size:12px; opacity:0.75; font-weight:400;">mayurkulkarni787@gmail.com</div></div>
+      </a>
+      <a href="https://linkedin.com/in/mayurkulkarni787" target="_blank" rel="noopener"
+         style="display:flex; align-items:center; gap:14px; padding:16px 20px; background:#e8f4fd; color:#0077b5; border-radius:14px; text-decoration:none; font-weight:700; font-size:14px; transition:background 0.2s; border:1.5px solid #0077b5;"
+         onmouseover="this.style.background='#d0e9f7'" onmouseout="this.style.background='#e8f4fd'">
+        <span style="font-size:22px;">🔗</span>
+        <div><div style="font-size:13px; font-weight:800;">LinkedIn</div><div style="font-size:12px; opacity:0.75; font-weight:400;">linkedin.com/in/mayurkulkarni787</div></div>
+      </a>
+    </div>
+  </div>
+</div>
+
 <hr class="divider" style="margin-bottom:80px;"/>
 
 <!-- ═══ CONTACT ═══ -->
@@ -1178,44 +1288,65 @@
     <div>
       <div class="section-label">Contact</div>
       <h2>Let's Build<br/>Something Together.</h2>
-      <p>Have a Power Platform project in mind? Looking to automate workflows or build a custom SharePoint solution? Reach out!</p>
+      <p>Have a Power Platform project in mind? Looking to automate workflows or build a custom SharePoint solution? Let's connect!</p>
       <div class="contact-links">
+        <a class="contact-link" href="https://wa.me/919403548207" target="_blank" rel="noopener"><span>💬</span><span>WhatsApp: +91 94035 48207</span></a>
+        <a class="contact-link" href="tel:+919403548207"><span>📞</span><span>Call: +91 94035 48207</span></a>
         <a class="contact-link" href="mailto:mayurkulkarni787@gmail.com"><span>📧</span><span>mayurkulkarni787@gmail.com</span></a>
         <a class="contact-link" href="https://linkedin.com/in/mayurkulkarni787" target="_blank" rel="noopener"><span>🔗</span><span>linkedin.com/in/mayurkulkarni787</span></a>
         <a class="contact-link" href="https://github.com/mayurkulkarni787" target="_blank" rel="noopener"><span>🐙</span><span>github.com/mayurkulkarni787</span></a>
       </div>
     </div>
-    <div class="contact-form">
-      <div class="form-row">
-        <input class="form-input" type="text" placeholder="Your Name"/>
-        <input class="form-input" type="email" placeholder="Email Address"/>
-      </div>
-      <input class="form-input" type="text" placeholder="Subject (e.g. Power Apps Project)"/>
-      <textarea class="form-input" placeholder="Tell me about your project..."></textarea>
-      <button class="btn-send">Send Message →</button>
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; text-align:center;">
+      <div style="font-size:60px;">🤝</div>
+      <div style="font-family:'Sora',sans-serif; font-size:20px; font-weight:800; color:#fff; line-height:1.3;">Ready to start a project?</div>
+      <p style="color:rgba(255,255,255,0.6); font-size:14px; max-width:280px; margin:0;">I'm just one message away. Click below to get connected instantly!</p>
+      <button onclick="openContact()"
+        style="background:#25d366; color:#fff; border:none; padding:16px 36px; border-radius:100px; font-size:15px; font-weight:700; font-family:'Sora',sans-serif; cursor:pointer; display:inline-flex; align-items:center; gap:10px; transition:background 0.2s; box-shadow:0 4px 20px rgba(37,211,102,0.4);"
+        onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+        💬 Let's Talk Now
+      </button>
     </div>
   </section>
 </div>
 
-<footer>© 2026 · Mayur Kulkarni · Power Platform Developer</footer>
+<footer>
+  <div style="max-width:1100px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px;">
+    <span>© 2026 · Mayur Kulkarni · Power Platform Developer</span>
+    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+      <a href="https://wa.me/919403548207" target="_blank" rel="noopener" style="color:var(--light); text-decoration:none; font-size:13px;" onmouseover="this.style.color='#25d366'" onmouseout="this.style.color='#aaaaaa'">💬 +91 94035 48207</a>
+      <a href="mailto:mayurkulkarni787@gmail.com" style="color:var(--light); text-decoration:none; font-size:13px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='#aaaaaa'">📧 Email</a>
+      <a href="https://linkedin.com/in/mayurkulkarni787" target="_blank" rel="noopener" style="color:var(--light); text-decoration:none; font-size:13px;" onmouseover="this.style.color='#0077b5'" onmouseout="this.style.color='#aaaaaa'">🔗 LinkedIn</a>
+    </div>
+  </div>
+</footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── SCROLL TO TOP — single rAF, only when no hash in URL ──
+if (!window.location.hash) {
+  requestAnimationFrame(function() { window.scrollTo(0, 0); });
+}
+
 // ═══════════════════════════════════════
-// SCROLL TO TOP — GitHub Pages Fix
-// Only runs if NO hash in URL (i.e. not navigating to a section)
+// CONTACT MODAL
 // ═══════════════════════════════════════
-(function() {
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-  }
-  // Only force-top if there is no hash anchor in the URL
-  if (!window.location.hash) {
-    // Use requestAnimationFrame to run after the browser's own scroll restore
-    requestAnimationFrame(function() {
-      window.scrollTo(0, 0);
-    });
-  }
-})();
+function openContact() {
+  var m = document.getElementById('contact-modal');
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeContact() {
+  var m = document.getElementById('contact-modal');
+  m.style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.getElementById('contact-modal').addEventListener('click', function(e){
+  if (e.target === this) closeContact();
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && document.getElementById('contact-modal').style.display === 'flex') closeContact();
+});
+
 
 // ═══════════════════════════════════════
 // SMOOTH SCROLL for all anchor links
@@ -1239,7 +1370,7 @@ document.addEventListener('click', function(e) {
 
 // ═══════════════════════════════════════
 // ACTIVE PILL TRACKER
-// Excludes stats-strip from section list (it has no pill)
+
 // ═══════════════════════════════════════
 var sectionIds = ['hero','about','projects','services','testimonials','linkedin-posts','skills','certifications','experience','education','contact'];
 var pills = document.querySelectorAll('a.page-pill[href^="#"]');
@@ -1282,19 +1413,71 @@ function isVideo(f) { return VIDEO_EXTS.some(function(e){ return f.toLowerCase()
 
 function openLightbox(card) {
   var folder = card.dataset.folder || '';
-  var files  = (card.dataset.media || '').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
   var title  = card.dataset.title  || 'Project';
 
   lbCurrentFolder = folder;
-  lbCurrentMedia  = files;
+  lbCurrentMedia  = [];
   lbCurrentIndex  = 0;
 
   lbTitle.textContent = title;
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  buildLbThumbs();
-  showLbMedia(0);
+  // Show spinner while probing
+  lbSlot.innerHTML = '';
+  lbThumbsEl.innerHTML = '';
+  lbLoader.classList.add('show');
+  lbCounter.textContent = 'Loading...';
+  lbPrev.disabled = true;
+  lbNext.disabled = true;
+
+  // Probe all candidate filenames — collect ones that actually load
+  var probeList = (card.dataset.mediaProbe || card.dataset.media || '').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+  var found = [];
+  var pending = probeList.length;
+
+  if (pending === 0) {
+    lbLoader.classList.remove('show');
+    lbSlot.innerHTML = '<div class="lb-empty">No media added yet.<br/>Add images/videos to:<br/><small>' + folder + '/</small></div>';
+    return;
+  }
+
+  probeList.forEach(function(file) {
+    if (isVideo(file)) {
+      // Include videos without probing (can't probe video easily)
+      found.push({ file: file, order: probeList.indexOf(file) });
+      pending--;
+      if (pending === 0) finishProbe(found);
+      return;
+    }
+    var img = new Image();
+    var capturedFile = file;
+    var capturedOrder = probeList.indexOf(file);
+    img.onload = function() {
+      found.push({ file: capturedFile, order: capturedOrder });
+      pending--;
+      if (pending === 0) finishProbe(found);
+    };
+    img.onerror = function() {
+      pending--;
+      if (pending === 0) finishProbe(found);
+    };
+    img.src = folder + '/' + file;
+  });
+
+  function finishProbe(results) {
+    // Sort by original probe order
+    results.sort(function(a,b){ return a.order - b.order; });
+    lbCurrentMedia = results.map(function(r){ return r.file; });
+    lbLoader.classList.remove('show');
+    if (lbCurrentMedia.length === 0) {
+      lbSlot.innerHTML = '<div class="lb-empty">No images found in this folder yet.<br/><small>Add any images to ' + folder + '/</small></div>';
+      lbCounter.textContent = '';
+      return;
+    }
+    buildLbThumbs();
+    showLbMedia(0);
+  }
 }
 
 function closeLightbox() {
@@ -1470,173 +1653,101 @@ makeCarousel({ trackId:'li-track',    prevId:'li-prev',    nextId:'li-next',    
 makeCarousel({ trackId:'cert-track',  prevId:'cert-prev',  nextId:'cert-next',  dotsId:'cert-dots',  visible:3, gap:24, dotClass:'cert-dot',  dotActiveClass:'active' });
 
 // ═══════════════════════════════════════
-// SHOWCASE CAROUSEL
+// PROJECT SLIDESHOW — auto-advances every 5s, loops, click opens lightbox
 // ═══════════════════════════════════════
 (function() {
-  var projects = Array.from(document.querySelectorAll('.project-card')).map(function(card) {
-    return {
-      title:  card.dataset.title  || 'Project',
-      folder: card.dataset.folder || '',
-      files:  (card.dataset.media || '').split(',').map(function(f){ return f.trim(); }).filter(function(f){
-        return f && !f.match(/\.(mp4|webm|mov|ogg)$/i);
-      })
-    };
-  }).filter(function(p){ return p.files.length > 0; });
+  var track    = document.getElementById('proj-slideshow-track');
+  var dotsWrap = document.getElementById('proj-dots');
+  var progress = document.getElementById('proj-progress');
+  var slides   = Array.from(document.querySelectorAll('.proj-slide'));
+  if (!track || slides.length === 0) return;
 
-  var imgEl       = document.getElementById('showcase-img');
-  var overlayProj = document.getElementById('showcase-project-label');
-  var overlayFile = document.getElementById('showcase-file-label');
-  var counter     = document.getElementById('showcase-counter');
-  var prevBtn     = document.getElementById('showcase-prev');
-  var nextBtn     = document.getElementById('showcase-next');
-  var tabsEl      = document.getElementById('showcase-tabs');
-  var filmstrip   = document.getElementById('showcase-filmstrip');
-  var emptyEl     = document.getElementById('showcase-empty');
+  var current  = 0;
+  var total    = slides.length;
+  var timer    = null;
+  var INTERVAL = 5000; // 5 seconds
 
-  if (!imgEl) return;
-
-  var allSlides = [];
-  projects.forEach(function(p) {
-    p.files.forEach(function(f) {
-      allSlides.push({ src: p.folder + '/' + f, project: p.title, file: f });
-    });
+  // Build dots
+  slides.forEach(function(_, i) {
+    var d = document.createElement('button');
+    d.className = 'proj-slideshow-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    d.addEventListener('click', function() { goTo(i); resetTimer(); });
+    dotsWrap.appendChild(d);
   });
 
-  var currentSlide   = 0;
-  var currentProject = 'all';
-
-  function getSlides() {
-    if (currentProject === 'all') return allSlides;
-    return allSlides.filter(function(s){ return s.project === currentProject; });
-  }
-
-  function buildTabs() {
-    tabsEl.innerHTML = '';
-    var allBtn = document.createElement('button');
-    allBtn.className = 'showcase-tab active';
-    allBtn.textContent = 'All Projects';
-    allBtn.addEventListener('click', function(){ switchProject('all', allBtn); });
-    tabsEl.appendChild(allBtn);
-    projects.forEach(function(p) {
-      var btn = document.createElement('button');
-      btn.className = 'showcase-tab';
-      btn.textContent = p.title;
-      btn.addEventListener('click', function(){ switchProject(p.title, btn); });
-      tabsEl.appendChild(btn);
+  function goTo(idx) {
+    current = (idx + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dotsWrap.querySelectorAll('.proj-slideshow-dot').forEach(function(d, i) {
+      d.classList.toggle('active', i === current);
     });
-  }
-
-  function switchProject(name, btn) {
-    currentProject = name;
-    currentSlide = 0;
-    tabsEl.querySelectorAll('.showcase-tab').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active');
-    buildFilmstrip();
-    showSlide(0);
-  }
-
-  function buildFilmstrip() {
-    filmstrip.innerHTML = '';
-    var slides = getSlides();
-    slides.forEach(function(s, i) {
-      var div = document.createElement('div');
-      div.className = 'showcase-thumb' + (i === 0 ? ' active' : '');
-      var img = document.createElement('img');
-      img.alt = s.file;
-      img.addEventListener('error', function(){ div.style.background = '#e4e4e4'; img.style.display = 'none'; });
-      img.src = s.src;
-      div.appendChild(img);
-      div.addEventListener('click', function(){ showSlide(i); });
-      filmstrip.appendChild(div);
-    });
-  }
-
-  function showSlide(idx) {
-    var slides = getSlides();
-    if (slides.length === 0) {
-      imgEl.style.display = 'none';
-      emptyEl.classList.add('show');
-      counter.textContent = '0 / 0';
-      prevBtn.disabled = nextBtn.disabled = true;
-      return;
+    // Reset + animate progress bar
+    if (progress) {
+      progress.style.transition = 'none';
+      progress.style.width = '0%';
+      // Force reflow then animate
+      progress.getBoundingClientRect();
+      progress.style.transition = 'width ' + INTERVAL + 'ms linear';
+      progress.style.width = '100%';
     }
-    emptyEl.classList.remove('show');
-    imgEl.style.display = 'block';
-
-    currentSlide = Math.max(0, Math.min(idx, slides.length - 1));
-    var slide = slides[currentSlide];
-
-    imgEl.classList.add('fade');
-    var newImg = document.createElement('img'); // preload to detect errors
-    newImg.addEventListener('load', function() {
-      imgEl.src = slide.src;
-      imgEl.alt = slide.file;
-      imgEl.classList.remove('fade');
-    });
-    newImg.addEventListener('error', function() {
-      // Image missing — show placeholder text in overlay, skip quietly
-      imgEl.src = '';
-      imgEl.classList.remove('fade');
-    });
-    newImg.src = slide.src;
-
-    overlayProj.textContent = slide.project;
-    overlayFile.textContent = slide.file;
-    counter.textContent = (currentSlide + 1) + ' / ' + slides.length;
-    prevBtn.disabled = (currentSlide === 0);
-    nextBtn.disabled = (currentSlide === slides.length - 1);
-
-    filmstrip.querySelectorAll('.showcase-thumb').forEach(function(t, i){
-      t.classList.toggle('active', i === currentSlide);
-    });
-    var activeThumb = filmstrip.querySelectorAll('.showcase-thumb')[currentSlide];
-    if (activeThumb) { try { activeThumb.scrollIntoView({ inline: 'nearest', behavior: 'smooth' }); } catch(e){} }
   }
 
-  prevBtn.addEventListener('click', function(){ showSlide(currentSlide - 1); });
-  nextBtn.addEventListener('click', function(){ showSlide(currentSlide + 1); });
+  function next() { goTo(current + 1); }
 
-  buildTabs();
-  buildFilmstrip();
-  // Start with empty state if no images exist — graceful
-  if (allSlides.length === 0) {
-    imgEl.style.display = 'none';
-    emptyEl.classList.add('show');
-    counter.textContent = '0 / 0';
-    if(prevBtn) prevBtn.disabled = true;
-    if(nextBtn) nextBtn.disabled = true;
-  } else {
-    showSlide(0);
+  function startTimer() {
+    timer = setInterval(next, INTERVAL);
   }
+
+  function resetTimer() {
+    clearInterval(timer);
+    startTimer();
+  }
+
+  // Click on slideshow → open lightbox for that project
+  var slideshow = document.getElementById('proj-slideshow');
+  slideshow.addEventListener('click', function() {
+    var slide = slides[current];
+    var folder = slide.dataset.folder;
+    var matchingCard = document.querySelector('.project-card[data-folder="' + folder + '"]');
+    if (matchingCard) openLightbox(matchingCard);
+  });
+
+  // Pause on hover, resume on leave
+  slideshow.addEventListener('mouseenter', function() {
+    clearInterval(timer);
+    if (progress) { progress.style.transition = 'none'; }
+  });
+  slideshow.addEventListener('mouseleave', function() {
+    resetTimer();
+  });
+
+  // Init
+  goTo(0);
+  startTimer();
 })();
 
-// ═══════════════════════════════════════
-// STATS STRIP — Intersection Observer
-// ═══════════════════════════════════════
-var statItems = document.querySelectorAll('.stat-item');
-var statsObserver = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry, i) {
-    if (entry.isIntersecting) {
-      setTimeout(function(){ entry.target.classList.add('visible'); }, i * 100);
-      statsObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.3 });
-statItems.forEach(function(s){ statsObserver.observe(s); });
 
 // ═══════════════════════════════════════
-// EXPERIENCE — Animate on scroll
+// EXPERIENCE — Animate on scroll (safe: visible by default, animate only off-screen items)
 // ═══════════════════════════════════════
 var expItems = document.querySelectorAll('.exp-item');
 var expObserver = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry, i) {
+  entries.forEach(function(entry) {
     if (entry.isIntersecting) {
-      setTimeout(function(){ entry.target.classList.add('visible'); }, i * 120);
+      entry.target.classList.add('visible');
       expObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.1 });
-expItems.forEach(function(item){ expObserver.observe(item); });
+}, { threshold: 0 });
+setTimeout(function() {
+  expItems.forEach(function(item) {
+    var rect = item.getBoundingClientRect();
+    var inView = rect.top < window.innerHeight && rect.bottom > 0;
+    if (!inView) { item.classList.add('animate-ready'); }
+    expObserver.observe(item);
+  });
+}, 150);
 </script>
 </body>
 </html>
