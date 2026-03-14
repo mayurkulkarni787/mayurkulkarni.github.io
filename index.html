@@ -11,7 +11,7 @@
 // These MUST be in <head> because HTML onerror= fires before body scripts load.
 
 function tryHeroPhoto(img) {
-  var exts = ['png','jpeg','webp'];
+  var exts = ['jpg','jpeg','webp'];
   var tried = img.dataset.heroTried ? parseInt(img.dataset.heroTried) : 0;
   if (tried < exts.length) {
     img.dataset.heroTried = tried + 1;
@@ -88,8 +88,8 @@ function tryThumb(img, folder) {
   .hero-logos { margin-top: 28px; }
   .hero-logos-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--light); display: block; margin-bottom: 12px; }
   .hero-logos-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .hero-logos-row img { width: 32px; height: 32px; object-fit: contain; filter: grayscale(1) opacity(0.5); transition: filter 0.25s, transform 0.2s, box-shadow 0.2s; border-radius: 8px; border: 1px solid var(--border); background: var(--white); padding: 4px; }
-  .hero-logos-row img:hover { filter: grayscale(0) opacity(1); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .hero-logos-row img { width: 32px; height: 32px; object-fit: contain; filter: grayscale(0) opacity(1); transition: filter 0.25s, transform 0.2s, box-shadow 0.2s; border-radius: 8px; border: 1px solid var(--border); background: var(--white); padding: 4px; }
+  .hero-logos-row img:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   .hero-visual { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; }
   .hero-avatar { width: 220px; height: 220px; background: linear-gradient(135deg, #e8f0ff 0%, #ddeeff 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 72px; box-shadow: 0 8px 40px rgba(0,120,212,0.18); overflow: hidden; border: 4px solid var(--white); }
   .hero-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
@@ -165,6 +165,9 @@ function tryThumb(img, folder) {
   .cert-issuer { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
   .cert-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.35; margin-bottom: 6px; }
   .cert-date { font-size: 12px; color: var(--light); }
+  .cert-card.coming-soon { opacity: 0.75; }
+  .cert-card.coming-soon .cert-img-wrap { background: var(--bg); }
+  .cert-coming-badge { display: inline-flex; align-items: center; gap: 5px; background: #fff8e8; color: #d97706; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; margin-bottom: 5px; border: 1px solid #fde68a; }
 
   /* PROJECT SLIDESHOW */
   .proj-slideshow { position: relative; border-radius: 16px; overflow: hidden; background: var(--ink); cursor: pointer; }
@@ -294,8 +297,8 @@ function tryThumb(img, folder) {
   .testi-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .testi-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: #fff; }
   .testi-role { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
-  .testi-stars { display: flex; gap: 2px; margin-bottom: 14px; }
-  .testi-star { color: #f59e0b; font-size: 13px; }
+  .testi-stars { display: flex; gap: 2px; margin-bottom: 14px; color: #c8960c; }
+  .testi-stars span { color: #c8960c; }
   .testi-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; z-index: 10; }
   .testi-arrow:hover { background: rgba(255,255,255,0.2); }
   .testi-arrow:disabled { opacity: 0.2; pointer-events: none; }
@@ -495,9 +498,9 @@ function tryThumb(img, folder) {
       <h1 class="hero-title">Power Platform<br/><span>Developer</span><br/>& SPFx Expert</h1>
       <p class="hero-sub">I build smart business solutions with <strong>Power Apps</strong>, <strong>Power Automate</strong>, and <strong>SharePoint SPFx</strong> — turning complex workflows into simple, elegant apps.</p>
       <div class="hero-stats">
-        <div><div class="stat-num">15+</div><div class="stat-label">Projects Delivered</div></div>
-        <div><div class="stat-num">3+</div><div class="stat-label">Years Experience</div></div>
-        <div><div class="stat-num">10+</div><div class="stat-label">Happy Clients</div></div>
+        <div><div class="stat-num">10+</div><div class="stat-label">Projects Delivered</div></div>
+        <div><div class="stat-num">2+</div><div class="stat-label">Years Relevant Experience</div></div>
+        <div><div class="stat-num">5+</div><div class="stat-label">Happy Clients</div></div>
       </div>
       <div class="hero-logos">
         <span class="hero-logos-label">Built with</span>
@@ -516,7 +519,7 @@ function tryThumb(img, folder) {
     <div class="hero-visual">
       <div style="position:relative;">
         <div class="hero-avatar" id="hero-avatar-wrap">
-          <img id="hero-photo" src="images/profile/photo.jpg" alt="Mayur Kulkarni"
+          <img id="hero-photo" src="images/profile/photo.png" alt="Mayur Kulkarni"
                onerror="tryHeroPhoto(this)" />
         </div>
         <div class="floating-chip chip-1"><span>⚙️</span><span>Power Apps</span></div>
@@ -541,9 +544,12 @@ function tryThumb(img, folder) {
     <h2 class="section-title">Who I Am</h2>
     <div class="about-grid">
       <div class="about-text">
-        <p>Hi! I'm a <strong>Power Platform specialist</strong> with deep expertise in building custom business applications. I focus on making Microsoft 365 ecosystems smarter and more efficient.</p>
+        <p>Hi! I'm a <strong>Power Platform Developer</strong> with hands-on expertise in building custom business applications. I focus on making Microsoft 365 ecosystems smarter and more efficient.</p>
         <p>My work spans from <strong>canvas and model-driven Power Apps</strong> to fully customized <strong>SharePoint sites using SPFx and React</strong>. I love taking a messy business process and turning it into a clean, automated app.</p>
         <p>When I'm not building apps, I'm exploring the Microsoft ecosystem — Power Automate flows, Dataverse, and the latest in <strong>Teams integrations</strong>.</p>
+        <div style="margin-top:16px; display:inline-flex; align-items:center; gap:8px; background:var(--accent2); color:var(--accent); font-size:12px; font-weight:700; padding:6px 14px; border-radius:100px; border:1px solid #c7ddff;">
+          🏅 Microsoft Certified — PL-900 Power Platform Fundamentals
+        </div>
         <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
           <a class="btn-primary" href="#contact" style="font-size:13px; padding:11px 22px;">📬 Get in Touch</a>
           <a class="btn-secondary" href="https://www.linkedin.com/in/mayur-kulkarni-121118196/" target="_blank" rel="noopener" style="font-size:13px; padding:11px 22px;">🔗 LinkedIn</a>
@@ -552,12 +558,12 @@ function tryThumb(img, folder) {
       <div>
         <div style="font-size:13px; font-weight:700; color:var(--ink); margin-bottom:16px;">Core Proficiencies</div>
         <div class="skills-grid">
-          <div class="skill-bar-wrap"><label>Power Apps (Canvas + Model-Driven) <span>95%</span></label><div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div></div>
-          <div class="skill-bar-wrap"><label>Power Automate <span>90%</span></label><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
-          <div class="skill-bar-wrap"><label>SPFx + React <span>85%</span></label><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
-          <div class="skill-bar-wrap"><label>SharePoint Online <span>92%</span></label><div class="skill-bar"><div class="skill-fill" style="width:92%"></div></div></div>
-          <div class="skill-bar-wrap"><label>Dataverse / Power BI <span>78%</span></label><div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div></div>
-          <div class="skill-bar-wrap"><label>TypeScript / JavaScript <span>80%</span></label><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+          <div class="skill-bar-wrap"><label>Power Apps (Canvas + Model-Driven) <span>75%</span></label><div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div></div>
+          <div class="skill-bar-wrap"><label>Power Automate <span>60%</span></label><div class="skill-bar"><div class="skill-fill" style="width:60%"></div></div></div>
+          <div class="skill-bar-wrap"><label>SPFx + React <span>50%</span></label><div class="skill-bar"><div class="skill-fill" style="width:50%"></div></div></div>
+          <div class="skill-bar-wrap"><label>SharePoint Online <span>80%</span></label><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+          <div class="skill-bar-wrap"><label>Dataverse / Power BI <span>50%</span></label><div class="skill-bar"><div class="skill-fill" style="width:50%"></div></div></div>
+          <div class="skill-bar-wrap"><label>TypeScript / JavaScript <span>60%</span></label><div class="skill-bar"><div class="skill-fill" style="width:60%"></div></div></div>
         </div>
       </div>
     </div>
@@ -585,6 +591,7 @@ function tryThumb(img, folder) {
       <!-- ROW 1 — Power Apps x4 -->
       <div class="project-card" data-category="powerapps"
            data-folder="images/vacation-approval-system"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4"
            data-title="Vacation Approval System">
         <div class="project-thumb blue">
           <img src="images/vacation-approval-system/Thumbnail.jpg" alt="Vacation Approval System" onerror="tryThumb(this,'images/vacation-approval-system')" />
@@ -601,6 +608,7 @@ function tryThumb(img, folder) {
 
       <div class="project-card" data-category="powerapps"
            data-folder="images/employee-referral-app"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4"
            data-title="Employee Referral App">
         <div class="project-thumb purple">
           <img src="images/employee-referral-app/Thumbnail.jpg" alt="Employee Referral App" onerror="tryThumb(this,'images/employee-referral-app')" />
@@ -617,6 +625,7 @@ function tryThumb(img, folder) {
 
       <div class="project-card" data-category="powerapps"
            data-folder="images/canteen-app"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4"
            data-title="Canteen App">
         <div class="project-thumb green">
           <img src="images/canteen-app/Thumbnail.jpg" alt="Canteen App" onerror="tryThumb(this,'images/canteen-app')" />
@@ -633,6 +642,7 @@ function tryThumb(img, folder) {
 
       <div class="project-card" data-category="powerapps"
            data-folder="images/employee-database-system"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4"
            data-title="Employee Database System">
         <div class="project-thumb blue">
           <img src="images/employee-database-system/Thumbnail.jpg" alt="Employee Database System" onerror="tryThumb(this,'images/employee-database-system')" />
@@ -650,6 +660,7 @@ function tryThumb(img, folder) {
       <!-- ROW 2 — Power Automate x1 + SharePoint x3 -->
       <div class="project-card" data-category="automate"
            data-folder="images/invoice-approval-flow"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4"
            data-title="Invoice Approval Flow">
         <div class="project-thumb orange">
           <img src="images/invoice-approval-flow/Thumbnail.jpg" alt="Invoice Approval Flow" onerror="tryThumb(this,'images/invoice-approval-flow')" />
@@ -666,6 +677,7 @@ function tryThumb(img, folder) {
 
       <div class="project-card" data-category="sharepoint"
            data-folder="images/fastfood-sharepoint-site"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4"
            data-title="FastFood SharePoint Site">
         <div class="project-thumb teal">
           <img src="images/fastfood-sharepoint-site/Thumbnail.jpg" alt="FastFood SharePoint Site" onerror="tryThumb(this,'images/fastfood-sharepoint-site')" />
@@ -682,6 +694,7 @@ function tryThumb(img, folder) {
 
       <div class="project-card" data-category="sharepoint"
            data-folder="images/traveltour-sharepoint-site"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4"
            data-title="TravelTour SharePoint Site">
         <div class="project-thumb pink">
           <img src="images/traveltour-sharepoint-site/Thumbnail.jpg" alt="TravelTour SharePoint Site" onerror="tryThumb(this,'images/traveltour-sharepoint-site')" />
@@ -707,32 +720,38 @@ function tryThumb(img, folder) {
     <div class="proj-slideshow" id="proj-slideshow">
       <div class="proj-slideshow-track" id="proj-slideshow-track">
 
-        <div class="proj-slide" data-folder="images/vacation-approval-system" data-title="Vacation Approval System">
+        <div class="proj-slide" data-folder="images/vacation-approval-system"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4" data-title="Vacation Approval System">
           <img src="images/vacation-approval-system/Thumbnail.jpg" alt="Vacation Approval System" onerror="tryThumb(this,'images/vacation-approval-system')" />
           <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
         </div>
 
-        <div class="proj-slide" data-folder="images/employee-referral-app" data-title="Employee Referral App">
+        <div class="proj-slide" data-folder="images/employee-referral-app"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4" data-title="Employee Referral App">
           <img src="images/employee-referral-app/Thumbnail.jpg" alt="Employee Referral App" onerror="tryThumb(this,'images/employee-referral-app')" />
           <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
         </div>
 
-        <div class="proj-slide" data-folder="images/canteen-app" data-title="Canteen App">
+        <div class="proj-slide" data-folder="images/canteen-app"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4" data-title="Canteen App">
           <img src="images/canteen-app/Thumbnail.jpg" alt="Canteen App" onerror="tryThumb(this,'images/canteen-app')" />
           <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
         </div>
 
-        <div class="proj-slide" data-folder="images/invoice-approval-flow" data-title="Invoice Approval Flow">
+        <div class="proj-slide" data-folder="images/invoice-approval-flow"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4" data-title="Invoice Approval Flow">
           <img src="images/invoice-approval-flow/Thumbnail.jpg" alt="Invoice Approval Flow" onerror="tryThumb(this,'images/invoice-approval-flow')" />
           <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
         </div>
 
-        <div class="proj-slide" data-folder="images/fastfood-sharepoint-site" data-title="FastFood SharePoint Site">
+        <div class="proj-slide" data-folder="images/fastfood-sharepoint-site"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4" data-title="FastFood SharePoint Site">
           <img src="images/fastfood-sharepoint-site/Thumbnail.jpg" alt="FastFood SharePoint Site" onerror="tryThumb(this,'images/fastfood-sharepoint-site')" />
           <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
         </div>
 
-        <div class="proj-slide" data-folder="images/traveltour-sharepoint-site" data-title="TravelTour SharePoint Site">
+        <div class="proj-slide" data-folder="images/traveltour-sharepoint-site"
+           data-media="screen1.png,screen1.jpg,screen2.png,screen2.jpg,screen3.png,screen3.jpg,screen4.png,screen4.jpg,screenshot1.png,screenshot1.jpg,screenshot2.png,screenshot2.jpg,screenshot3.png,screenshot3.jpg,img1.png,img1.jpg,img2.png,img2.jpg,img3.png,img3.jpg,1.png,1.jpg,2.png,2.jpg,3.png,3.jpg,slide1.png,slide1.jpg,slide2.png,slide2.jpg,demo.mp4,video.mp4" data-title="TravelTour SharePoint Site">
           <img src="images/traveltour-sharepoint-site/Thumbnail.jpg" alt="TravelTour SharePoint Site" onerror="tryThumb(this,'images/traveltour-sharepoint-site')" />
           <div class="proj-slide-overlay"><span>🖼️ View Gallery</span></div>
         </div>
@@ -754,16 +773,16 @@ function tryThumb(img, folder) {
 <div id="stats-strip">
   <div class="stats-inner">
     <div class="stat-item">
-      <div class="stat-big">15<span>+</span></div>
+      <div class="stat-big">10<span>+</span></div>
       <div class="stat-desc">Projects Delivered</div>
     </div>
     <div class="stat-item">
-      <div class="stat-big">3<span>+</span></div>
-      <div class="stat-desc">Years Experience</div>
+      <div class="stat-big">2<span>+</span></div>
+      <div class="stat-desc">Years Relevant Exp.</div>
     </div>
     <div class="stat-item">
-      <div class="stat-big">500<span>+</span></div>
-      <div class="stat-desc">Concurrent Users Served</div>
+      <div class="stat-big">1<span>+</span></div>
+      <div class="stat-desc">Microsoft Certifications</div>
     </div>
     <div class="stat-item">
       <div class="stat-big">4<span>+</span></div>
@@ -838,66 +857,72 @@ function tryThumb(img, folder) {
         <button class="testi-arrow left" id="testi-prev">‹</button>
         <div class="testi-track-outer">
           <div class="testi-track" id="testi-track">
+
             <div class="testi-card">
               <div class="testi-stars">★★★★★</div>
               <span class="testi-quote-icon">"</span>
-              <p class="testi-text">Mayur delivered an exceptional Power Apps solution for our HR team. His ability to translate complex business requirements into clean, scalable apps is remarkable. The approval workflow he built cut our processing time in half.</p>
+              <p class="testi-text">Mayur's UI work on the BART SPFx project was impressive. He transformed complex legacy interfaces into clean, intuitive experiences — our users immediately noticed the difference. Solid developer with a great eye for design.</p>
               <div class="testi-person">
-                <div class="testi-avatar">S</div>
+                <div class="testi-avatar">K</div>
                 <div>
-                  <div class="testi-name">Sarah Mitchell</div>
-                  <div class="testi-role">HR Director · Fairview Health Services, USA</div>
+                  <div class="testi-name">Khoa Huynh</div>
+                  <div class="testi-role">T Manager · BART, US Government</div>
                 </div>
               </div>
             </div>
+
             <div class="testi-card">
               <div class="testi-stars">★★★★★</div>
               <span class="testi-quote-icon">"</span>
-              <p class="testi-text">The SPFx migration project Mayur led for BART was outstanding. He modernised 10+ legacy modules with zero disruption to our daily operations. His React skills and attention to detail are top-notch.</p>
+              <p class="testi-text">Mayur is a reliable and skilled developer on our team at Techtonica. He picks up requirements quickly, delivers clean Power Platform solutions, and always goes the extra mile to make sure things work end-to-end.</p>
               <div class="testi-person">
                 <div class="testi-avatar">R</div>
                 <div>
-                  <div class="testi-name">Robert Chen</div>
-                  <div class="testi-role">IT Manager · BART, US Government</div>
+                  <div class="testi-name">Rajesh Kharje</div>
+                  <div class="testi-role">Team Lead · Techtonica Technologies</div>
                 </div>
               </div>
             </div>
+
+            <div class="testi-card">
+              <div class="testi-stars"><span style="color:#c8960c;">★★★★</span><span style="position:relative;display:inline-block;color:#c8960c;"><span style="position:absolute;overflow:hidden;width:50%;color:#c8960c;">★</span><span style="color:rgba(200,150,12,0.25);">★</span></span></div>
+              <span class="testi-quote-icon">"</span>
+              <p class="testi-text">Working alongside Mayur at Techtonica has been great. His understanding of Power Platform — especially Canvas Apps and Dataverse — is strong. He asks the right questions and ships features that actually solve the business problem.</p>
+              <div class="testi-person">
+                <div class="testi-avatar">K</div>
+                <div>
+                  <div class="testi-name">Keyur Nathani</div>
+                  <div class="testi-role">Sr. Power Platform Developer · Techtonica Technologies</div>
+                </div>
+              </div>
+            </div>
+
             <div class="testi-card">
               <div class="testi-stars">★★★★★</div>
               <span class="testi-quote-icon">"</span>
-              <p class="testi-text">Working with Mayur on the Kaizen Shipping maintenance tracker was a great experience. He understood our data challenges quickly and delivered a well-structured SharePoint solution that our team actually enjoys using.</p>
+              <p class="testi-text">Mayur has a solid grasp of SharePoint Online architecture. At Techtonica he contributed well-structured list schemas and permission models that made our solutions easier to maintain. A dependable team member.</p>
               <div class="testi-person">
-                <div class="testi-avatar">T</div>
+                <div class="testi-avatar">U</div>
                 <div>
-                  <div class="testi-name">Tanaka Hiroshi</div>
-                  <div class="testi-role">Operations Lead · Kaizen Shipping, Thailand</div>
+                  <div class="testi-name">Uddheshya Patel</div>
+                  <div class="testi-role">Sr. SharePoint Developer · Techtonica Technologies</div>
                 </div>
               </div>
             </div>
+
             <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
+              <div class="testi-stars"><span style="color:#c8960c;">★★★★</span><span style="position:relative;display:inline-block;color:#c8960c;"><span style="position:absolute;overflow:hidden;width:50%;color:#c8960c;">★</span><span style="color:rgba(200,150,12,0.25);">★</span></span></div>
               <span class="testi-quote-icon">"</span>
-              <p class="testi-text">Mayur resolved our data quality issues with elegant cascading dropdowns and validation logic. Submission errors dropped by 35% immediately. He communicated clearly throughout and delivered ahead of schedule.</p>
+              <p class="testi-text">Mayur's SPFx work at Techtonica showed good progress. He adapted well to React-based web part development and integrated smoothly with our existing SharePoint framework. Keen to learn and improve with every sprint.</p>
               <div class="testi-person">
-                <div class="testi-avatar">J</div>
+                <div class="testi-avatar">A</div>
                 <div>
-                  <div class="testi-name">James Thornton</div>
-                  <div class="testi-role">Product Manager · CheeseGeek, UK</div>
+                  <div class="testi-name">Akash Chekkapally</div>
+                  <div class="testi-role">Sr. SPFx Developer · Techtonica Technologies</div>
                 </div>
               </div>
             </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <span class="testi-quote-icon">"</span>
-              <p class="testi-text">Mayur is one of the most dedicated Power Platform developers I've worked with. His ALM pipeline setup gave us true confidence in our deployments — zero-downtime releases across three environments from day one.</p>
-              <div class="testi-person">
-                <div class="testi-avatar">P</div>
-                <div>
-                  <div class="testi-name">Priya Nair</div>
-                  <div class="testi-role">Technical Lead · Techtonica Technologies</div>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
         <button class="testi-arrow right" id="testi-next">›</button>
@@ -919,7 +944,8 @@ function tryThumb(img, folder) {
       <button class="li-arrow left" id="li-prev">‹</button>
       <div class="li-track-outer">
         <div class="li-track" id="li-track">
-          <a class="li-card" href="https://linkedin.com/in/mayurkulkarni787" target="_blank" rel="noopener">
+
+          <a class="li-card" href="https://www.linkedin.com/posts/mayur-kulkarni-121118196_spfx-react-typescript-activity-7421948247772082176-hlio?utm_source=share&utm_medium=member_desktop" target="_blank" rel="noopener">
             <div class="li-card-header">
               <div class="li-avatar">M</div>
               <div>
@@ -929,15 +955,16 @@ function tryThumb(img, folder) {
               <div class="li-badge">LinkedIn</div>
             </div>
             <div class="li-card-body">
-              <div class="li-post-title">5 things I wish I knew before building my first Model-Driven Power App</div>
-              <div class="li-post-preview">After building several production model-driven apps, here are the lessons that would have saved me weeks. Delegation, Dataverse relationships, and why business process flows matter more than you think...</div>
+              <div class="li-post-title">Rebuilt a Power Apps solution in SPFx + React + TypeScript — for fun 🚀</div>
+              <div class="li-post-preview">After building a Vacation Booking App in Power Apps, I challenged myself to rebuild the same solution using SPFx with React & TypeScript. The goal was to explore the freedom, flexibility, and control that SPFx provides compared to low-code platforms...</div>
             </div>
             <div class="li-card-footer">
-              <div class="li-stats"><span class="li-stat">👍 124</span><span class="li-stat">💬 18</span></div>
-              <span class="li-date">Add your date</span>
+              <div class="li-stats"><span class="li-stat">👍 28</span><span class="li-stat">💬 2</span></div>
+              <span class="li-date">Feb 2026</span>
             </div>
           </a>
-          <a class="li-card" href="https://linkedin.com/in/mayurkulkarni787" target="_blank" rel="noopener">
+
+          <a class="li-card" href="https://www.linkedin.com/posts/mayur-kulkarni-121118196_sharepointonline-spfx-pnpjs-activity-7422352214947639296-Y4lh?utm_source=share&utm_medium=member_desktop" target="_blank" rel="noopener">
             <div class="li-card-header">
               <div class="li-avatar">M</div>
               <div>
@@ -947,15 +974,16 @@ function tryThumb(img, folder) {
               <div class="li-badge">LinkedIn</div>
             </div>
             <div class="li-card-body">
-              <div class="li-post-title">How we migrated 10 legacy SharePoint modules to SPFx React with zero downtime</div>
-              <div class="li-post-preview">Migrating a US Government client's legacy C# on-premises web parts to modern React-based SPFx was one of our biggest challenges this year. Here's the exact approach we used...</div>
+              <div class="li-post-title">SharePoint 5,000 Item Limit — myth vs reality 🔍</div>
+              <div class="li-post-preview">Many beginners believe: "SharePoint lists cannot handle more than 5,000 items." This is a myth. SharePoint lists can store millions of items. The real issue is how data is queried, not storage...</div>
             </div>
             <div class="li-card-footer">
-              <div class="li-stats"><span class="li-stat">👍 89</span><span class="li-stat">💬 12</span></div>
-              <span class="li-date">Add your date</span>
+              <div class="li-stats"><span class="li-stat">👍 34</span><span class="li-stat">💬 1</span></div>
+              <span class="li-date">Feb 2026</span>
             </div>
           </a>
-          <a class="li-card" href="https://linkedin.com/in/mayurkulkarni787" target="_blank" rel="noopener">
+
+          <a class="li-card" href="https://www.linkedin.com/posts/mayur-kulkarni-121118196_recommendations-for-working-with-css-in-sharepoint-activity-7422694980999114752-N82y?utm_source=share&utm_medium=member_desktop" target="_blank" rel="noopener">
             <div class="li-card-header">
               <div class="li-avatar">M</div>
               <div>
@@ -965,15 +993,16 @@ function tryThumb(img, folder) {
               <div class="li-badge">LinkedIn</div>
             </div>
             <div class="li-card-body">
-              <div class="li-post-title">Power Platform ALM: Why skipping CI/CD pipelines is costing your team more than you think</div>
-              <div class="li-post-preview">I see so many teams still manually exporting solutions from Dev and importing to Prod. Here's why that's risky and how to set up a proper Dev → UAT → Prod pipeline in under a day...</div>
+              <div class="li-post-title">SPFx Styling Gotcha — why CSS clashes happen on the same SharePoint page 💡</div>
+              <div class="li-post-preview">Ever noticed this? You add two SPFx web parts on one SharePoint page, both have the same CSS class name, and suddenly styles start affecting each other 😬 Here's why it happens and how to fix it...</div>
             </div>
             <div class="li-card-footer">
-              <div class="li-stats"><span class="li-stat">👍 201</span><span class="li-stat">💬 34</span></div>
-              <span class="li-date">Add your date</span>
+              <div class="li-stats"><span class="li-stat">👍 31</span><span class="li-stat">💬 2</span></div>
+              <span class="li-date">Feb 2026</span>
             </div>
           </a>
-          <a class="li-card" href="https://linkedin.com/in/mayurkulkarni787" target="_blank" rel="noopener">
+
+          <a class="li-card" href="https://www.linkedin.com/posts/mayur-kulkarni-121118196_microsoftcertified-pl900-powerplatform-activity-7427769958463512576-buRx?utm_source=share&utm_medium=member_desktop" target="_blank" rel="noopener">
             <div class="li-card-header">
               <div class="li-avatar">M</div>
               <div>
@@ -983,14 +1012,15 @@ function tryThumb(img, folder) {
               <div class="li-badge">LinkedIn</div>
             </div>
             <div class="li-card-body">
-              <div class="li-post-title">Dataverse vs SharePoint Lists — when to use which in Power Apps</div>
-              <div class="li-post-preview">This is the #1 question I get from Power Apps developers. The answer isn't always obvious, and getting it wrong early means painful refactoring later. Here's my decision framework...</div>
+              <div class="li-post-title">Just cleared Microsoft PL-900 — Power Platform Fundamentals! 🏅</div>
+              <div class="li-post-preview">Just Cleared the Microsoft Certified: Power Platform Fundamentals (PL-900) exam. Excited to keep building on this foundation and push further into the Power Platform ecosystem...</div>
             </div>
             <div class="li-card-footer">
-              <div class="li-stats"><span class="li-stat">👍 156</span><span class="li-stat">💬 27</span></div>
-              <span class="li-date">Add your date</span>
+              <div class="li-stats"><span class="li-stat">👍 29</span><span class="li-stat">💬 1</span></div>
+              <span class="li-date">Feb 2026</span>
             </div>
           </a>
+
         </div>
       </div>
       <button class="li-arrow right" id="li-next">›</button>
@@ -1036,56 +1066,80 @@ function tryThumb(img, folder) {
       <button class="cert-arrow left" id="cert-prev">‹</button>
       <div class="cert-track-outer">
         <div class="cert-track" id="cert-track">
-          <div class="cert-card">
+
+          <!-- EARNED -->
+          <div class="cert-card" style="cursor:pointer;" onclick="window.open('https://learn.microsoft.com/api/credentials/share/en-us/MayurKulkarni-0532/95605FA49A12A916?sharingId=69FCA490FC6E0CDC','_blank')">
             <div class="cert-img-wrap">
               <img src="images/certifications/pl-900.png" alt="PL-900" onerror="this.style.display='none'; this.parentElement.innerHTML='🏅';" />
             </div>
             <div class="cert-info">
               <div class="cert-issuer">Microsoft</div>
               <div class="cert-name">Power Platform Fundamentals (PL-900)</div>
-              <div class="cert-date">Jan 2024</div>
+              <div class="cert-date">Feb 2026 · <span style="color:var(--accent);font-weight:600;">View Credential ↗</span></div>
             </div>
           </div>
-          <div class="cert-card">
-            <div class="cert-img-wrap">
-              <img src="images/certifications/pl-200.png" alt="PL-200" onerror="this.style.display='none'; this.parentElement.innerHTML='🏅';" />
-            </div>
+
+          <!-- COMING SOON -->
+          <div class="cert-card coming-soon">
+            <div class="cert-img-wrap" style="font-size:40px;">🎯</div>
             <div class="cert-info">
+              <div class="cert-coming-badge">⏳ Coming Soon</div>
               <div class="cert-issuer">Microsoft</div>
               <div class="cert-name">Power Platform Functional Consultant (PL-200)</div>
-              <div class="cert-date">Mar 2024</div>
+              <div class="cert-date">In Progress</div>
             </div>
           </div>
-          <div class="cert-card">
-            <div class="cert-img-wrap">
-              <img src="images/certifications/ms-900.png" alt="MS-900" onerror="this.style.display='none'; this.parentElement.innerHTML='🏅';" />
-            </div>
+
+          <div class="cert-card coming-soon">
+            <div class="cert-img-wrap" style="font-size:40px;">🎯</div>
             <div class="cert-info">
-              <div class="cert-issuer">Microsoft</div>
-              <div class="cert-name">Microsoft 365 Fundamentals (MS-900)</div>
-              <div class="cert-date">Jun 2024</div>
-            </div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-img-wrap">
-              <img src="images/certifications/az-900.png" alt="AZ-900" onerror="this.style.display='none'; this.parentElement.innerHTML='🏅';" />
-            </div>
-            <div class="cert-info">
-              <div class="cert-issuer">Microsoft</div>
-              <div class="cert-name">Azure Fundamentals (AZ-900)</div>
-              <div class="cert-date">Sep 2024</div>
-            </div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-img-wrap">
-              <img src="images/certifications/pl-400.png" alt="PL-400" onerror="this.style.display='none'; this.parentElement.innerHTML='🏅';" />
-            </div>
-            <div class="cert-info">
+              <div class="cert-coming-badge">⏳ Coming Soon</div>
               <div class="cert-issuer">Microsoft</div>
               <div class="cert-name">Power Platform Developer (PL-400)</div>
-              <div class="cert-date">Dec 2024</div>
+              <div class="cert-date">In Progress</div>
             </div>
           </div>
+
+          <div class="cert-card coming-soon">
+            <div class="cert-img-wrap" style="font-size:40px;">🎯</div>
+            <div class="cert-info">
+              <div class="cert-coming-badge">⏳ Coming Soon</div>
+              <div class="cert-issuer">Microsoft</div>
+              <div class="cert-name">SharePoint Framework (SPFx) Certification</div>
+              <div class="cert-date">In Progress</div>
+            </div>
+          </div>
+
+          <div class="cert-card coming-soon">
+            <div class="cert-img-wrap" style="font-size:40px;">🎯</div>
+            <div class="cert-info">
+              <div class="cert-coming-badge">⏳ Coming Soon</div>
+              <div class="cert-issuer">Microsoft</div>
+              <div class="cert-name">Copilot Studio — GH-300</div>
+              <div class="cert-date">In Progress</div>
+            </div>
+          </div>
+
+          <div class="cert-card coming-soon">
+            <div class="cert-img-wrap" style="font-size:40px;">🎯</div>
+            <div class="cert-info">
+              <div class="cert-coming-badge">⏳ Coming Soon</div>
+              <div class="cert-issuer">Microsoft</div>
+              <div class="cert-name">Microsoft 365 Fundamentals (MS-900)</div>
+              <div class="cert-date">In Progress</div>
+            </div>
+          </div>
+
+          <div class="cert-card coming-soon">
+            <div class="cert-img-wrap" style="font-size:40px;">🎯</div>
+            <div class="cert-info">
+              <div class="cert-coming-badge">⏳ Coming Soon</div>
+              <div class="cert-issuer">Microsoft</div>
+              <div class="cert-name">Azure Fundamentals (AZ-900)</div>
+              <div class="cert-date">In Progress</div>
+            </div>
+          </div>
+
         </div>
       </div>
       <button class="cert-arrow right" id="cert-next">›</button>
@@ -1161,9 +1215,10 @@ function tryThumb(img, folder) {
             <div class="exp-period">Jun 2021 – Jul 2022</div>
           </div>
           <div class="exp-company">Bharat Engineering Corporation</div>
-          <div class="exp-location">Aurangabad, India</div>
+          <div class="exp-location">Chh. Sambhaji Nagar (Aurangabad), India</div>
           <ul class="exp-bullets">
             <li>Migrated <strong>50+ engineering documents</strong> to SharePoint Online with granular permission tiers and structured library taxonomy, cutting team retrieval time by <span class="stat-chip">50%</span>.</li>
+            <li>Worked on <strong>Site Contents, Document Libraries, Lists, and Site Pages</strong> — organised content architecture with versioning, metadata columns, and custom views for engineering teams.</li>
           </ul>
         </div>
       </div>
