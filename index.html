@@ -1478,7 +1478,6 @@ function openLightbox(card) {
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Show spinner while probing
   lbSlot.innerHTML = '';
   lbThumbsEl.innerHTML = '';
   lbLoader.classList.add('show');
@@ -1486,62 +1485,79 @@ function openLightbox(card) {
   lbPrev.disabled = true;
   lbNext.disabled = true;
 
-  // Probe all candidate filenames — collect ones that actually load
-  var probeList = (card.dataset.mediaProbe || card.dataset.media || '').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
-  var found = [];
-  var pending = probeList.length;
+  // Step 1: Try to load files.json from the project folder
+  // files.json should contain: ["Screenshot 2024-09-01 201018.png", "Screenshot 2024-09-01 201134.png", ...]
+  fetch(folder + '/files.json')
+    .then(function(r) {
+      if (!r.ok) throw new Error('no files.json');
+      return r.json();
+    })
+    .then(function(fileList) {
+      // Got the manifest — use it directly, filter out Thumbnail from gallery
+      var files = fileList.filter(function(f) {
+        return f && !f.toLowerCase().startsWith('thumbnail');
+      });
+      if (files.length === 0) throw new Error('empty manifest');
+      lbCurrentMedia = files;
+      lbLoader.classList.remove('show');
+      buildLbThumbs();
+      showLbMedia(0);
+    })
+    .catch(function() {
+      // Step 2: No files.json — fall back to probing hardcoded name patterns
+      var probeList = (card.dataset.mediaProbe || card.dataset.media || '').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      var found = [];
+      var pending = probeList.length;
 
-  if (pending === 0) {
-    lbLoader.classList.remove('show');
-    lbSlot.innerHTML = '<div class="lb-empty">No media added yet.<br/>Add images/videos to:<br/><small>' + folder + '/</small></div>';
-    return;
-  }
+      if (pending === 0) {
+        lbLoader.classList.remove('show');
+        lbSlot.innerHTML = '<div class="lb-empty">No images found.<br/><br/>Add a <strong>files.json</strong> to:<br/><small>' + folder + '/files.json</small></div>';
+        return;
+      }
 
-  probeList.forEach(function(file) {
-    var capturedFile = file;
-    var capturedOrder = probeList.indexOf(file);
+      probeList.forEach(function(file) {
+        var capturedFile = file;
+        var capturedOrder = probeList.indexOf(file);
 
-    if (isVideo(file)) {
-      // Probe video with a HEAD fetch — only include if file actually exists (200 OK)
-      fetch(folder + '/' + file, { method: 'HEAD' })
-        .then(function(r) {
-          if (r.ok) found.push({ file: capturedFile, order: capturedOrder });
-        })
-        .catch(function() { /* not found */ })
-        .finally(function() {
+        if (isVideo(file)) {
+          fetch(folder + '/' + file, { method: 'HEAD' })
+            .then(function(r) {
+              if (r.ok) found.push({ file: capturedFile, order: capturedOrder });
+            })
+            .catch(function() {})
+            .finally(function() {
+              pending--;
+              if (pending === 0) finishProbe(found);
+            });
+          return;
+        }
+
+        var img = new Image();
+        img.onload = function() {
+          found.push({ file: capturedFile, order: capturedOrder });
           pending--;
           if (pending === 0) finishProbe(found);
-        });
-      return;
-    }
+        };
+        img.onerror = function() {
+          pending--;
+          if (pending === 0) finishProbe(found);
+        };
+        img.src = folder + '/' + file;
+      });
 
-    // Probe images by actually loading them
-    var img = new Image();
-    img.onload = function() {
-      found.push({ file: capturedFile, order: capturedOrder });
-      pending--;
-      if (pending === 0) finishProbe(found);
-    };
-    img.onerror = function() {
-      pending--;
-      if (pending === 0) finishProbe(found);
-    };
-    img.src = folder + '/' + file;
-  });
-
-  function finishProbe(results) {
-    // Sort by original probe order
-    results.sort(function(a,b){ return a.order - b.order; });
-    lbCurrentMedia = results.map(function(r){ return r.file; });
-    lbLoader.classList.remove('show');
-    if (lbCurrentMedia.length === 0) {
-      lbSlot.innerHTML = '<div class="lb-empty">No images found in this folder yet.<br/><small>Add any images to ' + folder + '/</small></div>';
-      lbCounter.textContent = '';
-      return;
-    }
-    buildLbThumbs();
-    showLbMedia(0);
-  }
+      function finishProbe(results) {
+        results.sort(function(a,b){ return a.order - b.order; });
+        lbCurrentMedia = results.map(function(r){ return r.file; });
+        lbLoader.classList.remove('show');
+        if (lbCurrentMedia.length === 0) {
+          lbSlot.innerHTML = '<div class="lb-empty">No images found.<br/><br/>Create <strong>files.json</strong> in:<br/><small>' + folder + '/</small><br/><br/>See instructions below.</div>';
+          lbCounter.textContent = '';
+          return;
+        }
+        buildLbThumbs();
+        showLbMedia(0);
+      }
+    });
 }
 
 function closeLightbox() {
